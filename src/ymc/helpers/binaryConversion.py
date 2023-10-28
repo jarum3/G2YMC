@@ -1,3 +1,6 @@
+from typing import LiteralString
+
+
 def unsignedBinaryToInt(string: str) -> int:
     clippedString: str = string[-8:]
     placeValue: int = 128
@@ -29,11 +32,11 @@ def signedIntToBinary(num: int) -> str:
     signBit = "0"
     if (num < 0):
         signBit = "1"
-    shortReturnString = signBit + f'{abs(num):b}'[-7:]
+    shortReturnString: str = signBit + f'{abs(num):b}'[-7:]
     returnString = shortReturnString
     if (len(shortReturnString) < 8):
-        returnString = signBit * (8 -
-                                  len(shortReturnString)) + shortReturnString
+        extension: LiteralString = signBit * (8 - len(shortReturnString))
+        returnString: str = extension + shortReturnString
     return returnString
 
 
