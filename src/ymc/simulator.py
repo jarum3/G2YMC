@@ -7,6 +7,7 @@ def main():
     with open("instructions/asm.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
     # TODO: Edit this to first read the file into the start of memory as strings, then perform operations on that memory.
+    # TODO: Add special case for Memory to process 2 bytes into one argument (little-endian)
     with open("file.bin", "rb") as file:
         while (True):  # Halt instruction should call exit()
             file.seek(cpu.instructionPointer)
