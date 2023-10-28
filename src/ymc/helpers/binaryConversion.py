@@ -41,7 +41,7 @@ def signedIntToBinary(num: int) -> str:
 
 
 def addrToBinary(num: int) -> str:
-    return f'{num:b}'[-16:].zfill(0)
+    return f'{num:b}'[-16:].zfill(16)
 
 
 def BinaryToAddr(addr: str) -> int:
@@ -52,3 +52,8 @@ def BinaryToAddr(addr: str) -> int:
         value += int(char) * placeValue
         placeValue = int(placeValue / 2)
     return value
+
+
+# Handles one byte at a time
+def hexToBinary(hexCode: str) -> str:
+    return bin(int(hexCode, 16))[2:].zfill(8)
