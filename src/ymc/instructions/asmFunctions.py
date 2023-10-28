@@ -1,4 +1,4 @@
-import YMCCPU as cpu
+import ymc.YMCCPU as cpu
 import ymc.helpers.registerLookup as rl
 import ymc.helpers.binaryConversion as bc
 
