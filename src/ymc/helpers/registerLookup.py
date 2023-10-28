@@ -11,3 +11,4 @@ def eightBitToRegisters(bits: str) -> list[str]:
     returnList: list[str] = []
     returnList[0] = fourBitToRegister(bits[0:3])
     returnList[1] = fourBitToRegister(bits[4:7])
+    return returnList

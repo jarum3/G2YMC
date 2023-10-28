@@ -12,10 +12,10 @@ from typing import Callable
 class Instruction:
 
     def __init__(self, instruction: str, hex: str, width: int,
-                 argTypes: list[str], function: Callable[[any], None]) -> None:
+                 argTypes: list[str], function: Callable[..., None]) -> None:
         self.instruction = instruction
         self.hex = hex
         self.width = width
-        self.assembly_string: str = None
+        self.assembly_string: str | None = None
         self.argTypes = argTypes
         self.function = function

@@ -4,4 +4,5 @@ import ymc.helpers.binaryConversion as bc
 
 
 def outs(register) -> None:
-    print(bc.signedBinaryToInt(rl.fourBitToRegister[register]))
+    # print the signed representation of the CPU register pointed to by the register byte
+    print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))

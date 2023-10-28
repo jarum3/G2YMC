@@ -4,8 +4,8 @@ def unsignedBinaryToInt(string: str) -> int:
     value: int = 0
     for char in clippedString:
         value += int(char) * placeValue
-        placeValue /= 2
-    return int(value)
+        placeValue = int(placeValue / 2)
+    return value
 
 
 def signedBinaryToInt(string: str) -> int:
@@ -16,8 +16,8 @@ def signedBinaryToInt(string: str) -> int:
     placeValue: int = 64
     for char in clippedString:
         value += int(char) * placeValue
-        placeValue /= 2
-    return int(value)
+        placeValue = int(placeValue / 2)
+    return value
 
 
 def unsignedIntToBinary(num: int) -> str:
