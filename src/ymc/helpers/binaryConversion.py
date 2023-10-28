@@ -35,3 +35,17 @@ def signedIntToBinary(num: int) -> str:
         returnString = signBit * (8 -
                                   len(shortReturnString)) + shortReturnString
     return returnString
+
+
+def addrToBinary(num: int) -> str:
+    return f'{num:b}'[-16:].zfill(0)
+
+
+def BinaryToAddr(addr: str) -> int:
+    clippedString: str = addr[-16:]
+    placeValue: int = 2**15
+    value: int = 0
+    for char in clippedString:
+        value += int(char) * placeValue
+        placeValue = int(placeValue / 2)
+    return value
