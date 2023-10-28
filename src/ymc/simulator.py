@@ -12,7 +12,7 @@ def main():
             currInstr: Instruction = instructions[currHex]
             args: list[str] = []
             for i, arg in enumerate(currInstr.argTypes):
-                args[i] = file.read(cpu.typeWidths[arg])
+                args[i] = f'{file.read(cpu.typeWidths[arg]):0>8b}'
             currInstr.function(*args)
 
 
