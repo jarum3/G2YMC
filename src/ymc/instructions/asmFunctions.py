@@ -1,6 +1,7 @@
 import YMCCPU as cpu
 import helpers.registerLookup as rl
 import helpers.binaryConversion as bc
+from helpers.setFlags import setFlags
 import math
 
 
@@ -15,167 +16,166 @@ def outputUnsigned(register: str) -> None:
         cpu.registers[rl.fourBitToRegister(register)]))
 
 
+# print a newline
 def outputNewline() -> None:
     print("\n")
 
 
+# Grabs value from right register, puts it into left register
 def movRegisterRegister(registers: str) -> None:
     args: list[str] = rl.eightBitToRegisters(registers)
     cpu.registers[args[0]] = cpu.registers[args[1]]
 
 
+# Grabs value from memory at right address, puts it into left register
 def movRegisterMemory(register: str, address: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr_int: int = bc.BinaryToAddr(address)
     cpu.registers[reg] = cpu.memory[addr_int]
 
 
+# Grabs value from right literal, puts it into left register
 def movRegisterLiteral(register: str, literal: str) -> None:
     reg = rl.fourBitToRegister(register)
     cpu.registers[reg] = literal[-8:]
 
 
+# Grabs value from right register, puts it into memory at left address
 def movMemoryRegister(address: str, register: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr_int = bc.BinaryToAddr(address)
     cpu.memory[addr_int] = cpu.registers[reg]
 
 
+#####################################################
+# Two-argument arithmetic:
+# 1. Parse arguments through register or memory into ints (signed or unsigned for multiplication)
+# 2. Perform arithmetic on both ints
+# 3. Store result to left operand
+# 4. Set flags, add argument True for adding, subCF flag true if a < b (Borrow)
+#####################################################
+
+
 def addRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = int(bc.unsignedBinaryToInt(cpu.registers[0])) + int(
-        bc.unsignedBinaryToInt(cpu.registers[1]))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    result = a + b
     cpu.registers[0] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
-    if (result > 255): cpu.flags["CF"] = True
+    # Setting flags
+    cpu.flags = setFlags(result, True)
 
 
 def subRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = int(bc.unsignedBinaryToInt(cpu.registers[0])) - int(
-        bc.unsignedBinaryToInt(cpu.registers[1]))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    result = a - b
     cpu.registers[0] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
-    if (result < 0): cpu.flags["CF"] = True
+    cpu.flags = setFlags(result, False, (a < b))
 
 
 def uMultRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = int(bc.unsignedBinaryToInt(cpu.registers[0])) * int(
-        bc.unsignedBinaryToInt(cpu.registers[1]))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    result = a * b
     cpu.registers[0] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def sMultRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = int(bc.signedBinaryToInt(cpu.registers[0])) * int(
-        bc.signedBinaryToInt(cpu.registers[1]))
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    result = a * b
     cpu.registers[0] = bc.signedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def uDivRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = math.floor(
-        int(bc.unsignedBinaryToInt(cpu.registers[0])) /
-        int(bc.unsignedBinaryToInt(cpu.registers[1])))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    result = math.floor(a / b)
     cpu.registers[0] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def sDivRegisters(registers: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
-    result = math.floor(
-        int(bc.signedBinaryToInt(cpu.registers[0])) /
-        int(bc.signedBinaryToInt(cpu.registers[1])))
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    result = math.floor(a / b)
     cpu.registers[0] = bc.signedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def addRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = int(
-        bc.unsignedBinaryToInt(cpu.registers[reg]) +
-        int(bc.unsignedBinaryToInt(cpu.memory[addr])))
+    a = bc.unsignedBinaryToInt(cpu.registers[reg])
+    b = bc.unsignedBinaryToInt(cpu.memory[addr])
+    result = a + b
     cpu.registers[reg] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result, True)
 
 
 def subRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = int(
-        bc.unsignedBinaryToInt(cpu.registers[reg]) -
-        int(bc.unsignedBinaryToInt(cpu.memory[addr])))
+    a = bc.unsignedBinaryToInt(cpu.registers[reg])
+    b = bc.unsignedBinaryToInt(cpu.memory[addr])
+    result = a - b
     cpu.registers[reg] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result, False, (a < b))
 
 
 def uMultRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = math.floor(
-        int(
-            bc.unsignedBinaryToInt(cpu.registers[reg]) *
-            int(bc.unsignedBinaryToInt(cpu.memory[addr]))))
+    a = bc.unsignedBinaryToInt(cpu.registers[reg])
+    b = bc.unsignedBinaryToInt(cpu.memory[addr])
+    result = a * b
     cpu.registers[reg] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def sMultRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = math.floor(
-        int(
-            bc.signedBinaryToInt(cpu.registers[reg]) *
-            int(bc.signedBinaryToInt(cpu.memory[addr]))))
+    a = bc.signedBinaryToInt(cpu.registers[reg])
+    b = bc.signedBinaryToInt(cpu.memory[addr])
+    result = a * b
     cpu.registers[reg] = bc.signedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def uDivRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = math.floor(
-        int(
-            bc.unsignedBinaryToInt(cpu.registers[reg]) /
-            int(bc.unsignedBinaryToInt(cpu.memory[addr]))))
+    a = bc.unsignedBinaryToInt(cpu.registers[reg])
+    b = bc.unsignedBinaryToInt(cpu.memory[addr])
+    result = math.floor(a / b)
     cpu.registers[reg] = bc.unsignedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
 
 
 def sDivRegisterMemory(register: str, memory: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr = bc.BinaryToAddr(memory)
-    result = math.floor(
-        int(
-            bc.signedBinaryToInt(cpu.registers[reg]) /
-            int(bc.signedBinaryToInt(cpu.memory[addr]))))
+    a = bc.signedBinaryToInt(cpu.registers[reg])
+    b = bc.signedBinaryToInt(cpu.memory[addr])
+    result = math.floor(a / b)
     cpu.registers[reg] = bc.signedIntToBinary(result)
-    if (result == 0): cpu.flags["ZF"] = True
-    if (bc.unsignedIntToBinary(result)[0] == "1"): cpu.flags["SF"] = True
-    if (result > 127 or result < -128): cpu.flags["OF"] = True
+    cpu.flags = setFlags(result)
+
+
+#####################################################
+# Three-argument arithmetic:
+# 1. Parse arguments through registers (signed or unsigned for multiplication)
+# 2. Perform arithmetic on all 3 ints
+# 3. Store result to left operand
+# 4. Set flags, add argument True for adding, subCF flag true if a < b (Borrow)
+#    Flags should be set as they would be for only the right operation (a * b + c sets flags for adding, not multiplication)
+#####################################################
