@@ -6,16 +6,23 @@
 #   the line keyword
 #
 #######################################################################
-from typing import Callable
+from typing import Callable, Literal
 
 
 class Instruction:
 
-    def __init__(self, instruction: str, hex: str, width: int,
-                 argTypes: list[str], function: Callable[..., None]) -> None:
+    def __init__(self,
+                 instruction: str,
+                 hex: str,
+                 width: int,
+                 argTypes: list[Literal["register", "register-register",
+                                        "memory", "literal"]] | None,
+                 function: Callable[..., None],
+                 flags: bool = False) -> None:
         self.instruction = instruction
         self.hex = hex
         self.width = width
         self.assembly_string: str | None = None
         self.argTypes = argTypes
         self.function = function
+        self.flags = flags
