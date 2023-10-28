@@ -1,4 +1,4 @@
-from binaryConversion import unsignedIntToBinary as bc
+from helpers.binaryConversion import unsignedIntToBinary as bc
 
 
 def setFlags(result: int,

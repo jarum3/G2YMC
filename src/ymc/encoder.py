@@ -23,6 +23,8 @@ def main():
 
     # Move to next line
 
+    # Finished with loop, output to file.bin
+
 
 if __name__ == "__main__":
     main()

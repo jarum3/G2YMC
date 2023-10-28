@@ -6,7 +6,7 @@ instructions: dict[str, Instruction] = {}
 
 
 def addDict(instr: Instruction) -> None:
-    instructions[instr.instruction] = instr
+    instructions[instr.hexCode] = instr
 
 
 def main():
@@ -25,30 +25,42 @@ def main():
     addDict(
         Instruction("movrl", "03", 3, ["register", "literal"],
                     movRegisterLiteral))
-    addDict(Instruction("add"), "20", 2, ["register-register"], addRegisters,
-            True, True)
-    addDict(Instruction("sub"), "21", 2, ["register-register"], subRegisters,
-            True, True)
-    addDict(Instruction("mul"), "22", 2, ["register-register"], uMultRegisters,
-            False, True)
-    addDict(Instruction("smul"), "23", 2, ["register-register"],
-            sMultRegisters, False, True)
-    addDict(Instruction("div"), "24", 2, ["register-register"], uDivRegisters,
-            False, True)
-    addDict(Instruction("sdiv"), "25", 2, ["register-register"], sDivRegisters,
-            False, True)
-    addDict(Instruction("addrm"), "26", 2, ["register", "memory"],
-            addRegisterMemory, True, True)
-    addDict(Instruction("subrm"), "27", 2, ["register", "memory"],
-            subRegisterMemory, True, True)
-    addDict(Instruction("mulrm"), "28", 2, ["register", "memory"],
-            uMultRegisterMemory, False, True)
-    addDict(Instruction("smulrm"), "29", 2, ["register", "memory"],
-            sMultRegisterMemory, False, True)
-    addDict(Instruction("divrm"), "2A", 2, ["register", "memory"],
-            uDivRegisterMemory, False, True)
-    addDict(Instruction("udivrm"), "2B", 2, ["register", "memory"],
-            sDivRegisterMemory, False, True)
+    addDict(
+        Instruction("add", "20", 2, ["register-register"], addRegisters, True,
+                    True))
+    addDict(
+        Instruction("sub", "21", 2, ["register-register"], subRegisters, True,
+                    True))
+    addDict(
+        Instruction("mul", "22", 2, ["register-register"], uMultRegisters,
+                    False, True))
+    addDict(
+        Instruction("smul", "23", 2, ["register-register"], sMultRegisters,
+                    False, True))
+    addDict(
+        Instruction("div", "24", 2, ["register-register"], uDivRegisters,
+                    False, True))
+    addDict(
+        Instruction("sdiv", "25", 2, ["register-register"], sDivRegisters,
+                    False, True))
+    addDict(
+        Instruction("addrm", "26", 2, ["register", "memory"],
+                    addRegisterMemory, True, True))
+    addDict(
+        Instruction("subrm", "27", 2, ["register", "memory"],
+                    subRegisterMemory, True, True))
+    addDict(
+        Instruction("mulrm", "28", 2, ["register", "memory"],
+                    uMultRegisterMemory, False, True))
+    addDict(
+        Instruction("smulrm", "29", 2, ["register", "memory"],
+                    sMultRegisterMemory, False, True))
+    addDict(
+        Instruction("divrm", "2A", 2, ["register", "memory"],
+                    uDivRegisterMemory, False, True))
+    addDict(
+        Instruction("udivrm", "2B", 2, ["register", "memory"],
+                    sDivRegisterMemory, False, True))
 
     with open("instructions/asm.pkl", "wb") as file:
         pickle.dump(instructions, file)

@@ -13,7 +13,7 @@ class Instruction:
 
     def __init__(self,
                  instruction: str,
-                 hex: str,
+                 hexCode: str,
                  width: int,
                  argTypes: list[Literal["register", "register-register",
                                         "memory", "literal"]] | None,
@@ -21,7 +21,7 @@ class Instruction:
                  carryFlag: bool = False,
                  otherFlags: bool = False) -> None:
         self.instruction = instruction
-        self.hex = hex
+        self.hexCode = hexCode
         self.width = width
         self.assembly_string: str | None = None
         self.argTypes = argTypes
