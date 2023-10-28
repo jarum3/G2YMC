@@ -1,4 +1,4 @@
-import YMCCPU as cpu
+import instructions.YMCCPU as cpu
 import helpers.registerLookup as rl
 import helpers.binaryConversion as bc
 from helpers.setFlags import setFlags
