@@ -1,4 +1,9 @@
-registers: dict[str, int] = {"EAX": 0, "EBX": 0, "ECX": 0, "EDX": 0}
+registers: dict[str, str] = {
+    "EAX": "0" * 8,
+    "EBX": "0" * 8,
+    "ECX": "0" * 8,
+    "EDX": "0" * 8
+}
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
 memory: list[str] = ["00000000"] * 1024
 instructionPointer: int = 0

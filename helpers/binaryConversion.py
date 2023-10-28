@@ -35,6 +35,3 @@ def signedIntToBinary(num: int) -> str:
         returnString = signBit * (8 -
                                   len(shortReturnString)) + shortReturnString
     return returnString
-
-
-print(unsignedIntToBinary(241))

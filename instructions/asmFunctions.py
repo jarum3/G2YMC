@@ -1,6 +1,7 @@
-from YMCCPU import *
-from helpers.registerLookup import *
+import YMCCPU as ymc
+import helpers.registerLookup as rl
+import helpers.binaryConversion as bc
 
 
-def outs(register):
-    print(fourBitToRegister[register])
+def outs(register) -> None:
+    print(bc.signedBinaryToInt(rl.fourBitToRegister[register]))
