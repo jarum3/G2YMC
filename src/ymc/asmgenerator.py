@@ -25,6 +25,8 @@ def main():
     addDict(
         Instruction("movrl", "03", 3, ["register", "literal"],
                     movRegisterLiteral))
+    addDict(Instruction("add"), "20", 2, ["register-register"], addNumbers,
+            True, True)
 
     with open("instructions/asm.pkl", "wb") as file:
         pickle.dump(instructions, file)

@@ -18,11 +18,13 @@ class Instruction:
                  argTypes: list[Literal["register", "register-register",
                                         "memory", "literal"]] | None,
                  function: Callable[..., None],
-                 flags: bool = False) -> None:
+                 carryFlag: bool = False,
+                 otherFlags: bool = False) -> None:
         self.instruction = instruction
         self.hex = hex
         self.width = width
         self.assembly_string: str | None = None
         self.argTypes = argTypes
         self.function = function
-        self.flags = flags
+        self.carryFlag = carryFlag
+        self.otherFlags = otherFlags
