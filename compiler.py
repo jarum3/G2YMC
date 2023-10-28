@@ -8,6 +8,8 @@
 
 from PLine import PLine
 
+program_counter = 0
+
             # EDX    ECX    EBX    EAX
 registers =  [False, False, False, False] # python is weird and won't let you define a boolean array with 0 and 1 so we have to use true and false here
         # ZF     SF     OF     CF
