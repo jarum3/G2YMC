@@ -171,6 +171,67 @@ def sDivRegisterMemory(register: str, memory: str) -> None:
     cpu.flags = setFlags(result)
 
 
+# Compares are exactly the same as subtracts, but don't store their values.
+
+
+def compareRegisterRegister(registers: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    result = a - b
+    cpu.flags = setFlags(result, False, (a < b))
+
+
+def compareRegisterMemory(register: str, memory: str) -> None:
+    reg = rl.fourBitToRegister(register)
+    addr = bc.BinaryToAddr(memory)
+    a = bc.unsignedBinaryToInt(cpu.registers[reg])
+    b = bc.unsignedBinaryToInt(cpu.memory[addr])
+    result = a - b
+    cpu.flags = setFlags(result, False, (a < b))
+
+
+#####################################################
+# Jumps
+# All take one memory address, instruction pointer gets set here
+# Only if the conditional is met. Conditional is verified using flags
+#####################################################
+
+
+def unconditionalJump(address: str) -> None:
+    cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def jumpGreater(address: str) -> None:
+    if (cpu.flags["SF"] == False and cpu.flags["ZF"] == False):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def jumpGreaterEqual(address: str) -> None:
+    if (cpu.flags["SF"] == False):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def jumpLess(address: str) -> None:
+    if (cpu.flags["SF"]):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def JumpLessEqual(address: str) -> None:
+    if (cpu.flags["SF"] or cpu.flags["ZF"]):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def jumpNotEqual(address: str) -> None:
+    if (cpu.flags["ZF"] == False):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
+def jumpEqual(address: str) -> None:
+    if (cpu.flags["ZF"]):
+        cpu.instructionPointer = bc.BinaryToAddr(address)
+
+
 #####################################################
 # Three-argument arithmetic:
 # 1. Parse arguments through registers (signed or unsigned for multiplication)
