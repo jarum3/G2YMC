@@ -2,11 +2,13 @@ from instructions.Instruction import Instruction
 from instructions.asmFunctions import *
 import pickle
 
-instructions: dict[str, Instruction] = {}
+instructionsByHex: dict[str, Instruction] = {}
+instructionsByName: dict[str, Instruction] = {}
 
 
 def addDict(instr: Instruction) -> None:
-    instructions[instr.hexCode] = instr
+    instructionsByHex[instr.hexCode] = instr
+    instructionsByName[instr.instruction] = instr
 
 
 def main():
@@ -81,8 +83,10 @@ def main():
                         False))
     addDict(Instruction("je", "65", 3, ["memory"], jumpEqual, False, False))
 
-    with open("instructions/asm.pkl", "wb") as file:
-        pickle.dump(instructions, file)
+    with open("instructions/instructionsByHex.pkl", "wb") as file:
+        pickle.dump(instructionsByName, file)
+    with open("instructions/instructionsByName.pkl", "wb") as file:
+        pickle.dump(instructionsByName, file)
 
 
 if __name__ == "__main__":
