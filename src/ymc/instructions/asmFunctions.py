@@ -1,40 +1,40 @@
-import ymc.YMCCPU as cpu
-import ymc.helpers.registerLookup as rl
-import ymc.helpers.binaryConversion as bc
+import YMCCPU as cpu
+import helpers.registerLookup as rl
+import helpers.binaryConversion as bc
 
 
-def outs(register: str) -> None:
+def outputSigned(register: str) -> None:
     # print the signed representation of the CPU register pointed to by the register byte
     print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
 
 
-def outu(register: str) -> None:
+def outputUnsigned(register: str) -> None:
     # print the unsigned representation of the CPU register pointed to by the register byte
     print(bc.unsignedBinaryToInt(
         cpu.registers[rl.fourBitToRegister(register)]))
 
 
-def outnl() -> None:
+def outputNewline() -> None:
     print("\n")
 
 
-def movrr(registers: str) -> None:
+def movRegisterRegister(registers: str) -> None:
     args: list[str] = rl.eightBitToRegisters(registers)
     cpu.registers[args[0]] = cpu.registers[args[1]]
 
 
-def movmrm(register: str, address: str) -> None:
+def movRegisterMemory(register: str, address: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr_int: int = bc.BinaryToAddr(address)
     cpu.registers[reg] = cpu.memory[addr_int]
 
 
-def movrl(register: str, literal: str) -> None:
+def movRegisterLiteral(register: str, literal: str) -> None:
     reg = rl.fourBitToRegister(register)
     cpu.registers[reg] = literal[-8:]
 
 
-def movmr(address: str, register: str) -> None:
+def movMemoryRegister(address: str, register: str) -> None:
     reg = rl.fourBitToRegister(register)
     addr_int = bc.BinaryToAddr(address)
     cpu.memory[addr_int] = cpu.registers[reg]
