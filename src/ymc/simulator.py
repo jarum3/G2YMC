@@ -1,6 +1,6 @@
 import pickle
 from instructions.Instruction import Instruction
-import YMCCPU as cpu
+import instructions.YMCCPU as cpu
 
 
 def main():
@@ -14,8 +14,9 @@ def main():
             currHex = byte.hex()
             currInstr: Instruction = instructions[currHex]
             args: list[str] = []
-            for i, arg in enumerate(currInstr.argTypes):
-                args[i] = f'{file.read(cpu.typeWidths[arg]):0>8b}'
+            if (currInstr.argTypes):
+                for i, arg in enumerate(currInstr.argTypes):
+                    args[i] = f'{file.read(cpu.typeWidths[arg]):0>8b}'
             cpu.instructionPointer += currInstr.width
             currInstr.function(*args)
 
