@@ -179,3 +179,14 @@ def sDivRegisterMemory(register: str, memory: str) -> None:
 # 4. Set flags, add argument True for adding, subCF flag true if a < b (Borrow)
 #    Flags should be set as they would be for only the right operation (a * b + c sets flags for adding, not multiplication)
 #####################################################
+
+
+def addsubRegisters(registers: str, extraRegister: str) -> None:
+    regs: str = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a + b - c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, False, (b < c))
