@@ -1,3 +1,4 @@
+# Also handles 8-bit arg if and only if register value is held in 4 most-significant bits
 def fourBitToRegister(bits: str) -> str:
     if (bits[0] == "1"): return "EAX"
     if (bits[1] == "1"): return "EBX"
