@@ -10,11 +10,11 @@
 
 class PLine:
 
-    def __init__(self, text, type):
+    def __init__(self, text: str, type: int):
         self.text = text
         self.type = type
-        self.YMC_string = None  # this will be updated by our switch statement
-        self.assembly_string = None
+        self.YMC_string: str | None = None  # this will be updated by our switch statement
+        self.assembly_string: str | None = None
 
         if self.text.startswith(
                 '   '

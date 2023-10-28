@@ -6,7 +6,7 @@
 #
 #######################################################################
 
-from src.ymc.PLine import PLine
+from PLine import PLine
 
 program_counter = 0
 
@@ -62,7 +62,7 @@ def main():
             for line in file:  # Process each line here
                 # Create a line object. The constructor for this class will check if it is an indented line and automatically set its parent line if so.
                 # It will also set a flag telling us what category it belongs to (print, declaration, arithmetic operation, while or if)
-                pline_instance = PLine(
+                pline_instance: PLine = PLine(
                     line, 1
                 )  # the first parameter is the text of the line, the second is the type SEE SWITCH DICTIONARY
 
