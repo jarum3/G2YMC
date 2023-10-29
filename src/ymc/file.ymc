@@ -1,0 +1,4 @@
+movrl EAX, 150
+outnl
+outu EAX
+outnl
