@@ -3,6 +3,7 @@ from instructions.Instruction import Instruction
 import instructions.YMCCPU as cpu
 
 
+# None of this is close to finished, I just wanted an idea of the program flow
 def main():
     with open("instructions/asm.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
