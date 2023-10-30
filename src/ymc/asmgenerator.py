@@ -28,16 +28,16 @@ def main():
         Instruction("sub", "21", 2, ["register-register"], subRegisters, True, True)
     )
     addDict(
-        Instruction("mul", "22", 2, ["register-register"], uMultRegisters, False, True)
+        Instruction("mul", "22", 2, ["register-register"], uMultRegisters, True)
     )
     addDict(
-        Instruction("smul", "23", 2, ["register-register"], sMultRegisters, False, True)
+        Instruction("smul", "23", 2, ["register-register"], sMultRegisters, True)
     )
     addDict(
-        Instruction("div", "24", 2, ["register-register"], uDivRegisters, False, True)
+        Instruction("div", "24", 2, ["register-register"], uDivRegisters, True)
     )
     addDict(
-        Instruction("sdiv", "25", 2, ["register-register"], sDivRegisters, False, True)
+        Instruction("sdiv", "25", 2, ["register-register"], sDivRegisters, True)
     )
     addDict(
         Instruction(
@@ -51,22 +51,22 @@ def main():
     )
     addDict(
         Instruction(
-            "mulrm", "28", 2, ["register", "memory"], uMultRegisterMemory, False, True
+            "mulrm", "28", 2, ["register", "memory"], uMultRegisterMemory, True
         )
     )
     addDict(
         Instruction(
-            "smulrm", "29", 2, ["register", "memory"], sMultRegisterMemory, False, True
+            "smulrm", "29", 2, ["register", "memory"], sMultRegisterMemory, True
         )
     )
     addDict(
         Instruction(
-            "divrm", "2A", 2, ["register", "memory"], uDivRegisterMemory, False, True
+            "divrm", "2A", 2, ["register", "memory"], uDivRegisterMemory, True
         )
     )
     addDict(
         Instruction(
-            "udivrm", "2B", 2, ["register", "memory"], sDivRegisterMemory, False, True
+            "udivrm", "2B", 2, ["register", "memory"], sDivRegisterMemory, True
         )
     )
     addDict(
@@ -79,13 +79,13 @@ def main():
             "cmprm", "41", 4, ["register", "memory"], compareRegisterMemory, True, True
         )
     )
-    addDict(Instruction("jmp", "60", 3, ["memory"], unconditionalJump, False, False))
-    addDict(Instruction("jg", "60", 3, ["memory"], jumpGreater, False, False))
-    addDict(Instruction("jge", "61", 3, ["memory"], jumpGreaterEqual, False, False))
-    addDict(Instruction("jl", "62", 3, ["memory"], jumpLess, False, False))
-    addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual, False, False))
-    addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual, False, False))
-    addDict(Instruction("je", "65", 3, ["memory"], jumpEqual, False, False))
+    addDict(Instruction("jmp", "60", 3, ["memory"], unconditionalJump))
+    addDict(Instruction("jg", "60", 3, ["memory"], jumpGreater))
+    addDict(Instruction("jge", "61", 3, ["memory"], jumpGreaterEqual))
+    addDict(Instruction("jl", "62", 3, ["memory"], jumpLess))
+    addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
+    addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
+    addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
 
     with open("instructions/instructionsByHex.pkl", "wb") as file:
         pickle.dump(instructionsByName, file)
