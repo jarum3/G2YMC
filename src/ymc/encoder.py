@@ -16,25 +16,36 @@ def main():
         for line in file:
             # Loop through lines of input file
             if (len(line)) > 0:
+                # Remove everything that isn't alphanumeric, negative, or a space (Also removes commas)
                 lineTrimmed = re.sub(r'[^-A-Za-z0-9 ]+', '', line)
+                # Split string on spaces (Instr at pieces[0], arguments at rest)
                 pieces = lineTrimmed.split(" ")
+                # Extracts current instruction
                 currInstr = pieces[0]
+                # Extracts arguments
                 args = pieces[1:]
                 # Convert line into instruction and arguments
                 binary: list[str] = []
+                # Add binary form of string to string
                 binary.append(bc.hexToBinary(instructions[currInstr].hexCode))
+                # Get array of argument types
                 argTypes = instructions[currInstr].argTypes
-                if args and argTypes:
+                if args and argTypes:  # Just making sure we have arguments to process
                     # Read argument types from instruction
                     i = 0
-                    while i < len(args):
-                        if argTypes[i] == 'memory':
+                    while i < len(
+                            args
+                    ):  # Stop processing once we're done with arguments
+                        if argTypes[
+                                i] == 'memory':  # Convert memory address to little-endian
                             address = bc.addrToBinary(int(args[i]))
                             binary.append(address[8:16])
                             binary.append(address[0:8])
-                        elif argTypes[i] == 'register':
+                        elif argTypes[
+                                i] == 'register':  # One register in one-byte
                             binary.append(rl.registerToFourBit(args[i]))
-                        elif argTypes[i] == 'register-register':
+                        elif argTypes[
+                                i] == 'register-register':  # Both registers to one-byte (Two arguments in one match)
                             binary.append(
                                 rl.registersToEightBit(args[i], args[i + 1]))
                             i += 1
