@@ -1,3 +1,7 @@
+##############################
+# Stores global values relating to CPU data that can be used across instruction functions
+##############################
+
 # Stores register values as single bytes, starting as all 0s
 registers: dict[str, str] = {
     "EAX": "0" * 8,

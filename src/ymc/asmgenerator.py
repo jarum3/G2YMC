@@ -1,11 +1,18 @@
+########################
+# Generates instances of each instruction as an object of Instruction class,
+# then adds them to two dictionaries, and saves those dictionaries
+# to two pickle files to be used later
+########################
 from instructions.Instruction import Instruction
 from instructions.asmFunctions import *
 import pickle
 
+# Empty dictionaries
 instructionsByHex: dict[str, Instruction] = {}
 instructionsByName: dict[str, Instruction] = {}
 
 
+## Adds a single instruction to dictionary of instructions with hex code key (for simulator) and instruction name (for encoder)
 def addDict(instr: Instruction) -> None:
     instructionsByHex[instr.hexCode] = instr
     instructionsByName[instr.instruction] = instr
@@ -13,6 +20,8 @@ def addDict(instr: Instruction) -> None:
 
 def main():
     # No parentheses for function name
+    # Instruction name, hex code, total width, argument types, function, and optional general flags and carry flags
+    # All can be found in encoding document, just written down in code
     addDict(Instruction("hlt", "A0", 1, None, exit))
     # Continue for all instructions
     addDict(Instruction("outs", "A1", 2, ["register"], outputSigned))
@@ -72,8 +81,10 @@ def main():
     addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
     addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
     addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
-## TODO: Add three-arg arithmetic
+    ## TODO: Add three-arg arithmetic
 
+    # Write both dictionaries to pickle files
+    #! Python processes filenames in relation to current working directory, make sure that it is set to G2YMC/src/ymc for this to work
     with open("instructions/instructionsByHex.pkl", "wb") as file:
         pickle.dump(instructionsByName, file)
     with open("instructions/instructionsByName.pkl", "wb") as file:

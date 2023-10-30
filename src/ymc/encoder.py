@@ -1,3 +1,8 @@
+##########################################
+# Takes in a file from file.ymc
+# then encodes it into a binary string
+# and writes that string to file.bin 
+##########################################
 import pickle
 from instructions.Instruction import Instruction
 import helpers.binaryConversion as bc

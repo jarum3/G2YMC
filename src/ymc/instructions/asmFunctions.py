@@ -1,17 +1,24 @@
-import instructions.YMCCPU as cpu
-import helpers.registerLookup as rl
-import helpers.binaryConversion as bc
-from helpers.setFlags import setFlags
-import math
+###############################
+# Contains a ton of functions that correspond to instructions
+# and a rough outline of their funcitionality
+# so the simulator can eventually use these (once-polished) to execute code.
+# Necessary for encoder to properly debug
+###############################
 
+import instructions.YMCCPU as cpu # Using CPU registers/flags/memory
+import helpers.registerLookup as rl # Using register lookups
+import helpers.binaryConversion as bc # Using binary conversions
+from helpers.setFlags import setFlags # Setting flags in arithmetic instructions
+import math # For rounding from division
 
+## Special instructions
+
+# print the signed representation of the CPU register pointed to by the register byte
 def outputSigned(register: str) -> None:
-    # print the signed representation of the CPU register pointed to by the register byte
     print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
 
-
+# print the unsigned representation of the CPU register pointed to by the register byte
 def outputUnsigned(register: str) -> None:
-    # print the unsigned representation of the CPU register pointed to by the register byte
     print(bc.unsignedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
 
 
@@ -19,6 +26,7 @@ def outputUnsigned(register: str) -> None:
 def outputNewline() -> None:
     print("\n")
 
+## Mov instructions
 
 # Grabs value from right register, puts it into left register
 def movRegisterRegister(registers: str) -> None:
@@ -170,6 +178,9 @@ def sDivRegisterMemory(register: str, memory: str) -> None:
     cpu.flags = setFlags(result)
 
 
+
+## Compare instructions
+
 # Compares are exactly the same as subtracts, but don't store their values.
 
 
@@ -196,36 +207,36 @@ def compareRegisterMemory(register: str, memory: str) -> None:
 # Only if the conditional is met. Conditional is verified using flags
 #####################################################
 
-
+# No check
 def unconditionalJump(address: str) -> None:
     cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# Not SF and not ZF -> Greater
 def jumpGreater(address: str) -> None:
     if cpu.flags["SF"] == False and cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# Not SF -> Greater than or equal to
 def jumpGreaterEqual(address: str) -> None:
     if cpu.flags["SF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# SF = less-than
 def jumpLess(address: str) -> None:
     if cpu.flags["SF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# SF or ZF -> less-than or equal
 def JumpLessEqual(address: str) -> None:
     if cpu.flags["SF"] or cpu.flags["ZF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# Not ZF -> not equal
 def jumpNotEqual(address: str) -> None:
     if cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
-
+# ZF -> Equal
 def jumpEqual(address: str) -> None:
     if cpu.flags["ZF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
@@ -240,6 +251,10 @@ def jumpEqual(address: str) -> None:
 #    Flags should be set as they would be for only the right operation (a * b + c sets flags for adding, not multiplication)
 #####################################################
 
+## All of these are almost identical except for:
+# Signed vs. Unsigned (mul vs smul, div vs sdiv)
+# Arithmetic operators (specific to instruction)
+# Flags set for right operation, args should be (result, [True if addition, False if subtraction], [(b <c) if subtraction])
 
 def addSubRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
@@ -481,3 +496,5 @@ def sdivsMulRegisters(registers: str, extraRegister: str) -> None:
     result = math.floor(a / b * c)
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
+
+## End of instructions
