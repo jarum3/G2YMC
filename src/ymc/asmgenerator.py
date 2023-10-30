@@ -22,14 +22,17 @@ def main():
     # No parentheses for function name
     # Instruction name, hex code, total width, argument types, function, and optional general flags and carry flags
     # All can be found in encoding document, just written down in code
+    # Halt, uses built-in exit
     addDict(Instruction("hlt", "A0", 1, None, exit))
-    # Continue for all instructions
+    # Output instructions
     addDict(Instruction("outs", "A1", 2, ["register"], outputSigned))
     addDict(Instruction("outu", "A2", 2, ["register"], outputUnsigned))
     addDict(Instruction("outnl", "A3", 1, None, outputNewline))
+    # Mov instructions
     addDict(Instruction("movrr", "01", 2, ["register-register"], movRegisterRegister))
     addDict(Instruction("movrm", "02", 4, ["register", "memory"], movRegisterMemory))
     addDict(Instruction("movrl", "03", 3, ["register", "literal"], movRegisterLiteral))
+    # Two-argument arithmetic
     addDict(
         Instruction("add", "20", 2, ["register-register"], addRegisters, True, True)
     )
@@ -64,6 +67,8 @@ def main():
     addDict(
         Instruction("udivrm", "2B", 4, ["register", "memory"], sDivRegisterMemory, True)
     )
+    
+    ## Compare
     addDict(
         Instruction(
             "cmprr", "40", 2, ["register-register"], compareRegisterRegister, True, True
@@ -74,6 +79,7 @@ def main():
             "cmprm", "41", 4, ["register", "memory"], compareRegisterMemory, True, True
         )
     )
+    # Jumps
     addDict(Instruction("jmp", "60", 3, ["memory"], unconditionalJump))
     addDict(Instruction("jg", "60", 3, ["memory"], jumpGreater))
     addDict(Instruction("jge", "61", 3, ["memory"], jumpGreaterEqual))
@@ -81,7 +87,207 @@ def main():
     addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
     addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
     addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
-    ## TODO: Add three-arg arithmetic
+    ## Three-arg arithmetic
+    addDict(
+        Instruction(
+            "addsub",
+            "80",
+            3,
+            ["register-register", "register"],
+            addSubRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "addmul", "81", 3, ["register-register", "register"], addMulRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "addsmul",
+            "82",
+            3,
+            ["register-register", "register"],
+            addsMulRegisters,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "adddiv", "83", 3, ["register-register", "register"], addDivRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "addsdiv",
+            "84",
+            3,
+            ["register-register", "register"],
+            addsDivRegisters,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "subadd",
+            "85",
+            3,
+            ["register-register", "register"],
+            subAddRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "submul", "86", 3, ["register-register", "register"], subMulRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "subsmul",
+            "87",
+            3,
+            ["register-register", "register"],
+            subsMulRegisters,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "subdiv", "88", 3, ["register-register", "register"], subDivRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "subsdiv",
+            "89",
+            3,
+            ["register-register", "register"],
+            subsDivRegisters,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "muladd",
+            "8A",
+            3,
+            ["register-register", "register"],
+            mulAddRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "mulsub",
+            "8B",
+            3,
+            ["register-register", "register"],
+            mulSubRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "muldiv", "8C", 3, ["register-register", "register"], mulDivRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "smuladd",
+            "8D",
+            3,
+            ["register-register", "register"],
+            smulAddRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "smulsub",
+            "8E",
+            3,
+            ["register-register", "register"],
+            smulSubRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "smulsdiv",
+            "8F",
+            3,
+            ["register-register", "register"],
+            smulsDivRegisters,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "divadd",
+            "90",
+            3,
+            ["register-register", "register"],
+            divAddRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "divsub",
+            "91",
+            3,
+            ["register-register", "register"],
+            divSubRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "divmul", "92", 3, ["register-register", "register"], divMulRegisters, True
+        )
+    )
+    addDict(
+        Instruction(
+            "sdivadd",
+            "93",
+            3,
+            ["register-register", "register"],
+            sdivAddRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "sdivsub",
+            "94",
+            3,
+            ["register-register", "register"],
+            sdivSubRegisters,
+            True,
+            True,
+        )
+    )
+    addDict(
+        Instruction(
+            "sdivsmul",
+            "95",
+            3,
+            ["register-register", "register"],
+            sdivsMulRegisters,
+            True,
+        )
+    )
 
     # Write both dictionaries to pickle files
     #! Python processes filenames in relation to current working directory, make sure that it is set to G2YMC/src/ymc for this to work
