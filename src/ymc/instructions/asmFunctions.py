@@ -236,7 +236,7 @@ def jumpEqual(address: str) -> None:
 # 1. Parse arguments through registers (signed or unsigned for multiplication)
 # 2. Perform arithmetic on all 3 ints
 # 3. Store result to left operand
-# 4. Set flags, add argument True for adding, subCF flag true if a < b (Borrow)
+# 4. Set flags, add argument True for adding, subCF flag true if b < c for subtracting (Borrow)
 #    Flags should be set as they would be for only the right operation (a * b + c sets flags for adding, not multiplication)
 #####################################################
 
