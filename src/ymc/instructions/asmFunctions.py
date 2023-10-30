@@ -257,16 +257,17 @@ def jumpEqual(address: str) -> None:
 # Flags set for right operation, args should be (result, [True if addition, False if subtraction], [(b <c) if subtraction])
 
 def addSubRegisters(registers: str, extraRegister: str) -> None:
-    regs: list[str] = rl.eightBitToRegisters(registers)
-    regs[2] = rl.fourBitToRegister(extraRegister)
+    regs: list[str] = rl.eightBitToRegisters(registers) # Grab registers
+    regs[2] = rl.fourBitToRegister(extraRegister) # Grab third register
+    # Assign each register to a variable
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a + b - c
-    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
-    setFlags(result, False, (b < c))
+    result = a + b - c # Do the arithmetic operation
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result) # Store the result
+    setFlags(result, False, (b < c)) # Set the flags for the rightmost operation
 
-
+# All of these are exactly the same save the exceptions marked above
 def addMulRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
     regs[2] = rl.fourBitToRegister(extraRegister)
