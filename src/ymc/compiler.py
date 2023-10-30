@@ -16,7 +16,7 @@ registers =  [0, 0, 0, 0] # python is weird and won't let you define a boolean a
 flags =  [False, False, False, False]     # maybe I'm wrong and one of you guys can figure out how to be able to use 0 and 1
 
 # This is how chat GPT told me to make a list with a specified size. Not sure if there is a better way or not
-size = 1000  # 1 kb is 1000 bytes
+size = 1024  # 1 kb is 1000 bytes
 default_value = 0  # Define the default value.
 # Memory array here. Not sure what type to make it
 memory = [default_value] * size
