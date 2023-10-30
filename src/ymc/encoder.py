@@ -33,20 +33,14 @@ def main():
                 if args and argTypes:  # Just making sure we have arguments to process
                     # Read argument types from instruction
                     i = 0
-                    while i < len(
-                        args
-                    ):  # Stop processing once we're done with arguments
-                        if (
-                            argTypes[i] == "memory"
-                        ):  # Convert memory address to little-endian
+                    while i < len(args):  # Stop processing once we're done with arguments
+                        if (argTypes[i] == "memory"):  # Convert memory address to little-endian
                             address = bc.addrToBinary(int(args[i]))
                             binary.append(address[8:16])
                             binary.append(address[0:8])
                         elif argTypes[i] == "register":  # One register in one-byte
                             binary.append(rl.registerToFourBit(args[i]))
-                        elif (
-                            argTypes[i] == "register-register"
-                        ):  # Both registers to one-byte (Two arguments in one match)
+                        elif (argTypes[i] == "register-register"):  # Both registers to one-byte (Two arguments in one match)
                             binary.append(rl.registersToEightBit(args[i], args[i + 1]))
                             i += 1
                         elif argTypes[i] == "literal":
@@ -57,7 +51,6 @@ def main():
                         i += 1
                 for byte in binary:
                     binaryString += byte
-    print(binaryString)
     with open("file.bin", "w") as file:
         file.write(binaryString)
 
