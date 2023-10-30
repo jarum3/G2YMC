@@ -241,7 +241,7 @@ def jumpEqual(address: str) -> None:
 #####################################################
 
 
-def addsubRegisters(registers: str, extraRegister: str) -> None:
+def addSubRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
     regs[2] = rl.fourBitToRegister(extraRegister)
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
@@ -250,4 +250,234 @@ def addsubRegisters(registers: str, extraRegister: str) -> None:
     result = a + b - c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, False, (b < c))
-## TODO: Add three-arg arithmetic
+
+
+def addMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a + b * c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def addsMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a + b * c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
+
+def addDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a + b / c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def addsDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a + b / c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
+
+def subAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a - b + c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, True)
+
+
+def subMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a - b * c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def subsMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a - b * c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
+
+def subDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a - b / c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def subsDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a - b / c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
+
+def mulAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b + c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, True)
+
+
+def mulSubRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b - c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, False, (b < c))
+
+
+def mulDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a * b / c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def smulAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b + c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result, True)
+
+
+def smulSubRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b - c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result, False, (b < c))
+
+
+def smulsDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a * b / c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
+
+def divAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b + c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, True)
+
+
+def divSubRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b - c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, False, (b < c))
+
+
+def divMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b * c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def sdivAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b + c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result, True)
+
+
+def sdivSubRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b - c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result, False, (b < c))
+
+
+def sdivsMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs[2] = rl.fourBitToRegister(extraRegister)
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b * c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
