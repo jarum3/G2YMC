@@ -16,7 +16,7 @@ def main():
         for line in file:
             # Loop through lines of input file
             if (len(line)) > 0:
-                lineTrimmed = re.sub(r'[^A-Za-z0-9 ]+', '', line)
+                lineTrimmed = re.sub(r'[^-A-Za-z0-9 ]+', '', line)
                 pieces = lineTrimmed.split(" ")
                 currInstr = pieces[0]
                 args = pieces[1:]
@@ -48,7 +48,7 @@ def main():
                         i += 1
                 for byte in binary:
                     binaryString += byte
-
+    print(binaryString)
     with open("file.bin", "w") as file:
         file.write(binaryString)
 

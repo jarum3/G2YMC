@@ -32,7 +32,9 @@ def signedIntToBinary(num: int) -> str:
     signBit = "0"
     if (num < 0):
         signBit = "1"
-    shortReturnString: str = signBit + f'{abs(num):b}'[-7:]
+        num = num + 2**8
+    shortReturnString: str = signBit + bin(num if num > 0 else num +
+                                           (1 << 32))[2:][-7:]
     returnString = shortReturnString
     if (len(shortReturnString) < 8):
         extension: LiteralString = signBit * (8 - len(shortReturnString))
