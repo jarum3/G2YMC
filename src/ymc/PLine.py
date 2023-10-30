@@ -28,7 +28,7 @@ class PLine:
         if self.text.startswith("print"): # print
             self.type = 4
 
-    def setYMC(ymc): # this is how we will store the YMC string
+    def setYMC(self, ymc): # this is how we will store the YMC string
         print("error handling")
 
     def setParent(self, parent):
