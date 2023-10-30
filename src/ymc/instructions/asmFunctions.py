@@ -250,3 +250,4 @@ def addsubRegisters(registers: str, extraRegister: str) -> None:
     result = a + b - c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, False, (b < c))
+## TODO: Add three-arg arithmetic

@@ -72,6 +72,7 @@ def main():
     addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
     addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
     addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
+## TODO: Add three-arg arithmetic
 
     with open("instructions/instructionsByHex.pkl", "wb") as file:
         pickle.dump(instructionsByName, file)
