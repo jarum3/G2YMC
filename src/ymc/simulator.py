@@ -10,15 +10,15 @@ def main():
     # TODO: Edit this to first read the file into the start of memory as strings, then perform operations on that memory.
     # TODO: Add special case for Memory to process 2 bytes into one argument (little-endian)
     with open("file.bin", "rb") as file:
-        while (True):  # Halt instruction should call exit()
+        while True:  # Halt instruction should call exit()
             file.seek(cpu.instructionPointer)
             byte = file.read(1)
             currHex = byte.hex()
             currInstr: Instruction = instructions[currHex]
             args: list[str] = []
-            if (currInstr.argTypes):
+            if currInstr.argTypes:
                 for i, arg in enumerate(currInstr.argTypes):
-                    args[i] = f'{file.read(cpu.typeWidths[arg]):0>8b}'
+                    args[i] = f"{file.read(cpu.typeWidths[arg]):0>8b}"
             cpu.instructionPointer += currInstr.width
             currInstr.function(*args)
 

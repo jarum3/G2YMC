@@ -3,7 +3,7 @@ registers: dict[str, str] = {
     "EAX": "0" * 8,
     "EBX": "0" * 8,
     "ECX": "0" * 8,
-    "EDX": "0" * 8
+    "EDX": "0" * 8,
 }
 # Stores flag values as booleans
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
@@ -16,5 +16,5 @@ typeWidths: dict[str, int] = {
     "literal": 1,
     "register": 1,
     "register-register": 1,
-    "memory": 2
+    "memory": 2,
 }

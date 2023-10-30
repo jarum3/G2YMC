@@ -10,16 +10,17 @@ from typing import Callable, Literal
 
 
 class Instruction:
-
-    def __init__(self,
-                 instruction: str,
-                 hexCode: str,
-                 width: int,
-                 argTypes: list[Literal["register", "register-register",
-                                        "memory", "literal"]] | None,
-                 function: Callable[..., None],
-                 carryFlag: bool = False,
-                 otherFlags: bool = False) -> None:
+    def __init__(
+        self,
+        instruction: str,
+        hexCode: str,
+        width: int,
+        argTypes: list[Literal["register", "register-register", "memory", "literal"]]
+        | None,
+        function: Callable[..., None],
+        carryFlag: bool = False,
+        otherFlags: bool = False,
+    ) -> None:
         self.instruction = instruction
         self.hexCode = hexCode
         self.width = width

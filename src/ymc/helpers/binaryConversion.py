@@ -14,7 +14,7 @@ def unsignedBinaryToInt(string: str) -> int:
 def signedBinaryToInt(string: str) -> int:
     clippedString: str = string[-7:]
     value: int = 0
-    if (string[-8] == "1"):
+    if string[-8] == "1":
         value = -128
     placeValue: int = 64
     for char in clippedString:
@@ -24,26 +24,25 @@ def signedBinaryToInt(string: str) -> int:
 
 
 def unsignedIntToBinary(num: int) -> str:
-    return f'{num:b}'[-8:].zfill(8)
+    return f"{num:b}"[-8:].zfill(8)
 
 
 # Has weird behavior when given numbers outside its data range, but that's expected
 def signedIntToBinary(num: int) -> str:
     signBit = "0"
-    if (num < 0):
+    if num < 0:
         signBit = "1"
         num = num + 2**8
-    shortReturnString: str = signBit + bin(num if num > 0 else num +
-                                           (1 << 32))[2:][-7:]
+    shortReturnString: str = signBit + bin(num if num > 0 else num + (1 << 32))[2:][-7:]
     returnString = shortReturnString
-    if (len(shortReturnString) < 8):
+    if len(shortReturnString) < 8:
         extension: LiteralString = signBit * (8 - len(shortReturnString))
         returnString: str = extension + shortReturnString
     return returnString
 
 
 def addrToBinary(num: int) -> str:
-    return f'{num:b}'[-16:].zfill(16)
+    return f"{num:b}"[-16:].zfill(16)
 
 
 def BinaryToAddr(addr: str) -> int:

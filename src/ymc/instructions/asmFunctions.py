@@ -12,8 +12,7 @@ def outputSigned(register: str) -> None:
 
 def outputUnsigned(register: str) -> None:
     # print the unsigned representation of the CPU register pointed to by the register byte
-    print(bc.unsignedBinaryToInt(
-        cpu.registers[rl.fourBitToRegister(register)]))
+    print(bc.unsignedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
 
 
 # print a newline
@@ -203,32 +202,32 @@ def unconditionalJump(address: str) -> None:
 
 
 def jumpGreater(address: str) -> None:
-    if (cpu.flags["SF"] == False and cpu.flags["ZF"] == False):
+    if cpu.flags["SF"] == False and cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
 def jumpGreaterEqual(address: str) -> None:
-    if (cpu.flags["SF"] == False):
+    if cpu.flags["SF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
 def jumpLess(address: str) -> None:
-    if (cpu.flags["SF"]):
+    if cpu.flags["SF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
 def JumpLessEqual(address: str) -> None:
-    if (cpu.flags["SF"] or cpu.flags["ZF"]):
+    if cpu.flags["SF"] or cpu.flags["ZF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
 def jumpNotEqual(address: str) -> None:
-    if (cpu.flags["ZF"] == False):
+    if cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
 def jumpEqual(address: str) -> None:
-    if (cpu.flags["ZF"]):
+    if cpu.flags["ZF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
 
