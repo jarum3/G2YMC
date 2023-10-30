@@ -42,27 +42,27 @@ def main():
     addDict(Instruction("sdiv", "25", 2, ["register-register"], sDivRegisters, True))
     addDict(
         Instruction(
-            "addrm", "26", 2, ["register", "memory"], addRegisterMemory, True, True
+            "addrm", "26", 4, ["register", "memory"], addRegisterMemory, True, True
         )
     )
     addDict(
         Instruction(
-            "subrm", "27", 2, ["register", "memory"], subRegisterMemory, True, True
+            "subrm", "27", 4, ["register", "memory"], subRegisterMemory, True, True
         )
     )
     addDict(
-        Instruction("mulrm", "28", 2, ["register", "memory"], uMultRegisterMemory, True)
+        Instruction("mulrm", "28", 4, ["register", "memory"], uMultRegisterMemory, True)
     )
     addDict(
         Instruction(
-            "smulrm", "29", 2, ["register", "memory"], sMultRegisterMemory, True
+            "smulrm", "29", 4, ["register", "memory"], sMultRegisterMemory, True
         )
     )
     addDict(
-        Instruction("divrm", "2A", 2, ["register", "memory"], uDivRegisterMemory, True)
+        Instruction("divrm", "2A", 4, ["register", "memory"], uDivRegisterMemory, True)
     )
     addDict(
-        Instruction("udivrm", "2B", 2, ["register", "memory"], sDivRegisterMemory, True)
+        Instruction("udivrm", "2B", 4, ["register", "memory"], sDivRegisterMemory, True)
     )
     addDict(
         Instruction(
