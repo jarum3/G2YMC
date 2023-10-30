@@ -87,7 +87,7 @@ def main():
     addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
     addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
     addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
-    ## Three-arg arithmetic
+    ## Three-arg arithmetic, split to stay under 90 columns
     addDict(
         Instruction(
             "addsub",
