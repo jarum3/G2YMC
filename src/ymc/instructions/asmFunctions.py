@@ -263,7 +263,8 @@ def addSubRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a + b - c # Do the arithmetic operation
+    result = a + b # Do the first arithmetic operation
+    result -= c         # Do the second arithmetic operation (Preserves lack of order-of-operations)
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result) # Store the result
     setFlags(result, False, (b < c)) # Set the flags for the rightmost operation
 
@@ -274,7 +275,8 @@ def addMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a + b * c
+    result = a + b
+    result *= c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -285,7 +287,8 @@ def addsMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = a + b * c
+    result = a + b
+    result *= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
@@ -296,7 +299,8 @@ def addDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a + b / c)
+    result = a + b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -307,7 +311,8 @@ def addsDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a + b / c)
+    result = a + b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
@@ -318,7 +323,8 @@ def subAddRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a - b + c
+    result = a - b
+    result += c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, True)
 
@@ -329,7 +335,8 @@ def subMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a - b * c
+    result = a - b
+    result *= c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -340,7 +347,8 @@ def subsMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = a - b * c
+    result = a - b
+    result *= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
@@ -351,7 +359,8 @@ def subDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a - b / c)
+    result = a - b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -362,7 +371,8 @@ def subsDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a - b / c)
+    result = a - b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
@@ -373,7 +383,8 @@ def mulAddRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a * b + c
+    result = a * b
+    result += c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, True)
 
@@ -384,7 +395,8 @@ def mulSubRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = a * b - c
+    result = a * b
+    result -= c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, False, (b < c))
 
@@ -395,7 +407,8 @@ def mulDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a * b / c)
+    result = a * b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -406,7 +419,8 @@ def smulAddRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = a * b + c
+    result = a * b
+    result += c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result, True)
 
@@ -417,7 +431,8 @@ def smulSubRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = a * b - c
+    result = a * b
+    result -= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result, False, (b < c))
 
@@ -428,7 +443,8 @@ def smulsDivRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a * b / c)
+    result = a * b
+    result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
@@ -439,7 +455,8 @@ def divAddRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b + c)
+    result = math.floor(a / b)
+    result += c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, True)
 
@@ -450,7 +467,8 @@ def divSubRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b - c)
+    result = math.floor(a / b)
+    result -= c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result, False, (b < c))
 
@@ -461,7 +479,8 @@ def divMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
     b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
     c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b * c)
+    result = math.floor(a / b)
+    result *= c
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
     setFlags(result)
 
@@ -472,7 +491,8 @@ def sdivAddRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b + c)
+    result = math.floor(a / b)
+    result += c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result, True)
 
@@ -483,7 +503,8 @@ def sdivSubRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b - c)
+    result = math.floor(a / b)
+    result -= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result, False, (b < c))
 
@@ -494,7 +515,8 @@ def sdivsMulRegisters(registers: str, extraRegister: str) -> None:
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = math.floor(a / b * c)
+    result = math.floor(a / b)
+    result *= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
