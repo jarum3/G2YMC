@@ -7,7 +7,7 @@
 #######################################################################
 
 from PLine import PLine
-import helpers.complier_extension as ce
+import ymc.helpers.compiler_extension as ce
 
 program_counter = 0
 
