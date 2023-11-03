@@ -28,8 +28,8 @@ class PLine:
         elif self.text.startswith("print"): # print
             self.type = 4
 
-    def setYMC(self, ymc): # this is how we will store the YMC string
+    def set_YMC(self, ymc): # this is how we will store the YMC string
         self.YMC_string = ymc
 
-    def setParent(self, parent):
+    def add_parent(self, parent):
         self.parent = parent
