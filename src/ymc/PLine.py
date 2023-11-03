@@ -18,18 +18,18 @@ class PLine:
         if self.text.startswith("signed" or "unsigned"): # delclaration
             self.type = 1
 
-        if self.text.startswith("if" or "else" or "while"): # relational
+        elif self.text.startswith("if" or "else" or "while"): # relational
             self.type = 3
             self.isParent = True
 
-        if self.text.includes("=" or"+" or "-" or "*" or "/"): # arithmetic
+        elif self.text.includes("=" or"+" or "-" or "*" or "/"): # arithmetic
             self.type = 2
 
-        if self.text.startswith("print"): # print
+        elif self.text.startswith("print"): # print
             self.type = 4
 
     def setYMC(self, ymc): # this is how we will store the YMC string
-        print("error handling")
+        self.YMC_string = ymc
 
     def setParent(self, parent):
         self.parent = parent
