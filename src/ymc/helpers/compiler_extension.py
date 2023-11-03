@@ -25,11 +25,13 @@ def get_number_of_lines(file_path):
         print(f"An error occurred: {e}")
 
 # Setting the parent of the each line instance
-def set_parent(pline_instance, pline_list, iter):
-    if pline_instance.text.startswith('   '):  
-        for j in range(iter - 1, -1, -1):
-            if not pline_list[j].text.startswith('  '):
-                pline_instance.add_parent(pline_list[j])
+def set_parent(pline_instance, pline_list, i):
+    prev_line = pline_list[i - 1]
+    if prev_line.text.startswith('  '):
+        pline_instance.add_parent(prev_line.parent)
+        return
+    pline_instance.add_parent(prev_line)
+    prev_line.isParent = True
 
 # This stuff is for the switch statement
 def declaration(pline_instance): # start by checking if signed or unsigned

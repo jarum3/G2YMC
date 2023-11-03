@@ -26,10 +26,11 @@ def main():
                 # Create a line object. It will set a flag telling us what category it belongs to (print, declaration, arithmetic operation, while or if)
                 pline_instance = PLine(line) 
                 pline_list[i] = pline_instance
-                i += 1
                 
                 # Setting the parent of the each line instance
-                ce.set_parent(pline_instance, pline_list, i)
+                if pline_instance.text.startswith('   '):
+                    ce.set_parent(pline_instance, pline_list, i)
+                i += 1
 
                 # this line will execute the corresponding function based on the line type
                 ce.switch_dict.get(pline_instance.type, ce.default_case)(pline_instance)
