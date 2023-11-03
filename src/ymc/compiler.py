@@ -9,16 +9,6 @@
 from PLine import PLine
 import ymc.helpers.compiler_extension as ce
 
-program_counter = 0
-
-registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
-
-flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
-
-size = 1024  # 1 kb is 1000 bytes
-default_value = 0  # Define the default value.
-memory = [default_value] * size
-
 def main():
     # Open the file in read mode
     file_path = "path_to_your_file.txt"  # Replace with the actual path to txt file 
