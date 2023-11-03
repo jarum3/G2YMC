@@ -13,10 +13,11 @@ class PLine:
         self.text = text
         self.YMC_string = None # this will be updated by our switch statement
         self.assembly_string = None
-        self.isParent = False
+        
 
         if self.text.startswith("signed" or "unsigned"): # delclaration
             self.type = 1
+            self.isParent = False
 
         elif self.text.startswith("if" or "else" or "while"): # relational
             self.type = 3
@@ -24,9 +25,11 @@ class PLine:
 
         elif self.text.includes("=" or"+" or "-" or "*" or "/"): # arithmetic
             self.type = 2
+            self.isParent = False
 
         elif self.text.startswith("print"): # print
             self.type = 4
+            self.isParent = False
 
     def set_YMC(self, ymc): # this is how we will store the YMC string
         self.YMC_string = ymc

@@ -27,11 +27,10 @@ def get_number_of_lines(file_path):
 # Setting the parent of the each line instance
 def set_parent(pline_instance, pline_list, i):
     prev_line = pline_list[i - 1]
-    if prev_line.text.startswith('  '):
+    if not prev_line.isParent:
         pline_instance.add_parent(prev_line.parent)
         return
     pline_instance.add_parent(prev_line)
-    prev_line.isParent = True
 
 # This stuff is for the switch statement
 def declaration(pline_instance): # start by checking if signed or unsigned
