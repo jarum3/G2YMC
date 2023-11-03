@@ -24,15 +24,15 @@ memory = [default_value] * size
 ### All of these have to be initialized before the switch_dict.get statement
 
 # This stuff is for the switch statement
-def declaration(): # start by checking if signed or unsigned
+def declaration(pline_instance): # start by checking if signed or unsigned
     print("This is case 1") # I left these print statments here to eliminate the error caused by having no code in the function
-def arithmetic(): # start by checking if 2 arguments or 3 arguments
+def arithmetic(pline_instance): # start by checking if 2 arguments or 3 arguments
     print("This is case 2")
-def relational(): # if/else and while statements, start by checking what each line is
+def relational(pline_instance): # if/else and while statements, start by checking what each line is
     print("This is case 3")
-def printD(): 
+def printD(pline_instance): 
     print("This is case 4")
-def default_case():
+def default_case(pline_instance):
     print("This is the default case")    
 
 switch_dict = {
@@ -58,7 +58,7 @@ def main():
                     print("Line starts with indentation:")
                 
                 # this line will execute the corresponding function based on the line type
-                switch_dict.get(pline_instance.type, default_case)()
+                switch_dict.get(pline_instance.type, default_case)(pline_instance)
 
     except FileNotFoundError:
         print("File not found. Please check the file path.")
