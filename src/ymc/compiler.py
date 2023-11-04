@@ -7,7 +7,7 @@
 #######################################################################
 
 from PLine import PLine
-import ymc.helpers.compiler_extension as ce
+import helpers.compiler_extension as ce
 
 def main():
     # Open the file in read mode
