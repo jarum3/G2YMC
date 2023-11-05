@@ -4,10 +4,11 @@
 from PLine import PLine
 
 program_counter = 0
-
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
-
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}  # I'm getting a runtime error here. It's goes away by adding ' ' around dict[str, bool] --Brad
+
+variables: dict[str, int] = {"a": 0, "b": 0, "c": 0, "x": 0, "y": 0, "z": 0}
+varibles_declared: dict[str, bool] = {"a": False, "b": False, "c": False, "x": False, "y": False, "z": False}
 
 size = 1024  # 1 kb is 1000 bytes
 default_value = 0  # Define the default value.
