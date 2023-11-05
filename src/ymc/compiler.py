@@ -8,15 +8,16 @@
 
 from PLine import PLine
 import helpers.compiler_extension as ce
+import helpers.compiler_functions as cf
 
 def main():
     # Open the file in read mode
     file_path = "path_to_your_file.txt"  # Replace with the actual path to txt file 
 
-    line_count = ce.get_number_of_lines(file_path)
-    default_value1 = None
+    line_count: int = cf.get_number_of_lines(file_path)
+    default_value1: PLine = None
     # Creation of line list, i.e. list that contains a PLine object for every line in the file
-    pline_list = [default_value1] * line_count
+    pline_list: PLine = [default_value1] * line_count
 
     i = 0
     try:
@@ -29,7 +30,7 @@ def main():
                 
                 # Setting the parent of the each line instance
                 if pline_instance.text.startswith('   '):
-                    ce.set_parent(pline_instance, pline_list, i)
+                    cf.set_parent(pline_instance, pline_list, i)
                 i += 1
 
                 # this line will execute the corresponding function based on the line type
