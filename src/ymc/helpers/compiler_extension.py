@@ -46,6 +46,9 @@ def declaration(pline_instance): # start by checking if signed or unsigned
 ##########################
 # Arithmetic operations and Assignments
 # Jacob Duncan
+# TODO: Handle the memroy addresses. Will have to have a discussion about how we are handling memory
+# TODO: Handle modified flags
+# TODO: Finish 3-arg arithmetic. I don't think we specified what the YMC instruction would be if it were two of the same operators (i.e: a + b + c, we do not have an instruction to handle this)
 ##########################
 def arithmetic(pline_instance): # assignment portion of flowchart
     line_text = pline_instance.text # grab text from line
@@ -55,51 +58,99 @@ def arithmetic(pline_instance): # assignment portion of flowchart
     del vars[0]     # delete the variable being assiged cause its stored 
     del vars[0]     # delete the = sign
 
+    temp_ymc: str
+
     # Handle assignments here
+    # TODO: Handle memory
     if len(vars) == 1: # this means that this is just an assingment operation with no arithmetic
-        if any(char.isdigit() for char in vars[0]):
+        if any(char.isdigit() for char in vars[0]): # literal
             variables[assignment] = int(vars[0]) # set varible to desired value
+            temp_ymc = "movrl eax, " + vars[0] + "\n"
         else:
-            variables[assignment] = variables[vars[0]]
-        # TODO: Add code to handle memory and translate into YMC, then return
+            variables[assignment] = variables[vars[0]] # variable
+            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
+        
+        temp_ymc += "movmr , eax\n" # TODO: Add the address
+        pline_instance.set_register("EAX")
+        pline_instance.set_YMC(temp_ymc)
+        return
 
     isSigned: bool = False
 
     # Handle 2-arg arithmetic
+    # TODO: Handle memory and modified flags
     if len(vars) == 3: # this means it is a 2-arg operation, var[0] = arg1, var[1] = operator, var[2] = arg2
         arguments: list[int] = cf.set2args(vars, variables)
         operator: str = vars[1]
         if arguments[0] or arguments[1] < 0:
                 isSigned = True
 
-        # TODO: Add code to handle memory and translate to YMC, then return
+        # Process first line of ymc
+        if any(char.isdigit() for char in vars[0]): # literal
+            temp_ymc = "movrl eax, " + vars[0] + "\n"
+        else: # variable
+            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
+        pline_instance.set_register("EAX")
+        # Process second line of ymc
+        if any(char.isdigit() for char in vars[2]): # literal
+            temp_ymc += "movrl ebx, " + vars[2] + "\n"
+        else: # variable
+            temp_ymc += "movrm ebx, " + "\n"# TODO: Add the address
+        pline_instance.set_register("EBX")
+
+        # Parse operators and process third line of ymc
         if operator == "+":
             variables[assignment] = arguments[0] + arguments[1]
+            temp_ymc += "add eax, ebx\n"
         elif operator == "-":
             variables[assignment] = arguments[0] - arguments[1]
+            temp_ymc += "sub eax, ebx\n"
         elif operator == "*":
             variables[assignment] = arguments[0] * arguments[1]
             if isSigned == True:
-                print("Handle signed multiplication here")
+                temp_ymc += "smul eax, ebx\n"
             else:
-                print("Handle unsigned multiplication here")
+                temp_ymc += "mul eax, ebx\n"
         elif operator == "/":
             variables[assignment] = math.floor(arguments[0] / arguments[1])
             if isSigned == True:
-                print("Handle signed division here")
+                temp_ymc += "sdiv eax, ebx\n"
             else:
-                print("Handle unsigned division here")
+                temp_ymc += "div eax, ebx\n"
+
+        temp_ymc += "movmr , eax\n" # TODO: Add the address
+        pline_instance.set_YMC(temp_ymc)
+        return
 
     # Handle 3-arg arithmetic
+    # TODO: Handle memory and modified flags, finish translating to YMC
     elif len(vars) == 5: # this means it is 3-arg operation
         arguments: list[int] = cf.set3args(vars, variables)
         operators: list[str] = [vars[1], vars[3]]
         if arguments[0] or arguments[1] or arguments[2] < 0:
                 isSigned = True
 
+        # Process first line of ymc
+        if any(char.isdigit() for char in vars[0]): # literal
+            temp_ymc = "movrl eax, " + vars[0] + "\n"
+        else: # variable
+            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
+        pline_instance.set_register("EAX")
+        # Process second line of ymc
+        if any(char.isdigit() for char in vars[2]): # literal
+            temp_ymc += "movrl ebx, " + vars[2] + "\n"
+        else: # variable
+            temp_ymc += "movrm ebx, " + "\n"# TODO: Add the address
+        pline_instance.set_register("EBX")
+        # Process third line of ymc
+        if any(char.isdigit() for char in vars[4]): # literal
+            temp_ymc += "movrl ecx, " + vars[4] + "\n"
+        else: # variable
+            temp_ymc += "movrm ecx, " + "\n"# TODO: Add the address
+        pline_instance.set_register("ECX")
+
         # Handle first operation. Operations are evaluated left to right, so we use the first two arguments here
         # When done, the result of the first operation will be stored in the destination variable for the time being
-        # TODO: Add code to handle memory and translate to YMC, then return
         if operators[0] == "+":
             variables[assignment] = arguments[0] + arguments[1]
         elif operators[0] == "-":
@@ -118,7 +169,6 @@ def arithmetic(pline_instance): # assignment portion of flowchart
                 print("Handle unsigned division here")
 
         # Handle second operation. Result of first op is stored in destination variable, so the operation is done on the variable and the third argument
-        # TODO: Add code to handle memory and translate to YMC, then return
         if operators[1] == "+":
             variables[assignment] = variables[assignment] + arguments[2]
         elif operators[1] == "-":

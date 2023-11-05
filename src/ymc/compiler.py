@@ -15,9 +15,9 @@ def main():
     file_path = "path_to_your_file.txt"  # Replace with the actual path to txt file 
 
     line_count: int = cf.get_number_of_lines(file_path)
-    default_value1: PLine | None = None
+    default_value1: PLine
     # Creation of line list, i.e. list that contains a PLine object for every line in the file
-    pline_list: list[PLine | None] = [default_value1] * line_count
+    pline_list: list[PLine] = [default_value1] * line_count
 
     i = 0
     try:
