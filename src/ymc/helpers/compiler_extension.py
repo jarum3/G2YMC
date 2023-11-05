@@ -6,6 +6,7 @@
 #
 #######################################################################
 
+import math
 from PLine import PLine
 import helpers.compiler_functions as cf
 
@@ -66,7 +67,7 @@ def arithmetic(pline_instance): # assignment portion of flowchart
 
     # Handle 2-arg arithmetic
     if len(vars) == 3: # this means it is a 2-arg operation, var[0] = arg1, var[1] = operator, var[2] = arg2
-        arguments: int = cf.set2args(vars, variables)
+        arguments: list[int] = cf.set2args(vars, variables)
         operator: str = vars[1]
         if arguments[0] or arguments[1] < 0:
                 isSigned = True
@@ -83,7 +84,7 @@ def arithmetic(pline_instance): # assignment portion of flowchart
             else:
                 print("Handle unsigned multiplication here")
         elif operator == "/":
-            variables[assignment] = arguments[0] / arguments[1]
+            variables[assignment] = math.floor(arguments[0] / arguments[1])
             if isSigned == True:
                 print("Handle signed division here")
             else:
@@ -91,8 +92,8 @@ def arithmetic(pline_instance): # assignment portion of flowchart
 
     # Handle 3-arg arithmetic
     elif len(vars) == 5: # this means it is 3-arg operation
-        arguments: int = cf.set3args(vars, variables)
-        operators: str = [vars[1], vars[3]]
+        arguments: list[int] = cf.set3args(vars, variables)
+        operators: list[str] = [vars[1], vars[3]]
         if arguments[0] or arguments[1] or arguments[2] < 0:
                 isSigned = True
 
@@ -110,7 +111,7 @@ def arithmetic(pline_instance): # assignment portion of flowchart
             else:
                 print("Handle unsigned multiplication here")
         elif operators[0] == "/":
-            variables[assignment] = arguments[0] / arguments[1]
+            variables[assignment] = math.floor(arguments[0] / arguments[1])
             if isSigned == True:
                 print("Handle signed division here")
             else:
@@ -129,7 +130,7 @@ def arithmetic(pline_instance): # assignment portion of flowchart
             else:
                 print("Handle unsigned multiplication here")
         elif operators[1] == "/":
-            variables[assignment] = variables[assignment] / arguments[2]
+            variables[assignment] = math.floor(variables[assignment] / arguments[2])
             if isSigned == True:
                 print("Handle signed division here")
             else:
