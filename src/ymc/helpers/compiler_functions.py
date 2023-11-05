@@ -13,6 +13,7 @@ def get_number_of_lines(file_path) -> int:
         print("File not found. Please check the file path.")
     except Exception as e:
         print(f"An error occurred: {e}")
+    return 0
 
 # Setting the parent of the each line instance
 def set_parent(pline_instance, pline_list, i):
@@ -22,7 +23,7 @@ def set_parent(pline_instance, pline_list, i):
         return
     pline_instance.add_parent(prev_line)
 
-def set2args(vars, variables) -> int:
+def set2args(vars, variables) -> list[int]:
     args = [0, 0]
     if any(char.isdigit() for char in vars[0]): # processing first argument
             args[0] = int(vars[0])
@@ -34,7 +35,7 @@ def set2args(vars, variables) -> int:
         args[0] = variables[vars[2]]
     return args
 
-def set3args(vars, variables) -> int:
+def set3args(vars, variables) -> list[int]:
     args = [0, 0, 0]
     if any(char.isdigit() for char in vars[0]): # processing first argument
             args[0] = int(vars[0])
