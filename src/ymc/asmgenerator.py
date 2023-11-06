@@ -32,6 +32,7 @@ def main():
     addDict(Instruction("movrr", "01", 2, ["register-register"], movRegisterRegister))
     addDict(Instruction("movrm", "02", 4, ["register", "memory"], movRegisterMemory))
     addDict(Instruction("movrl", "03", 3, ["register", "literal"], movRegisterLiteral))
+    addDict(Instruction("movmr", "04", 4, ["memory", "register"], movMemoryRegister))
     # Two-argument arithmetic
     addDict(
         Instruction("add", "20", 2, ["register-register"], addRegisters, True, True)
@@ -292,7 +293,7 @@ def main():
     # Write both dictionaries to pickle files
     #! Python processes filenames in relation to current working directory, make sure that it is set to G2YMC/src/ymc for this to work
     with open("instructions/instructionsByHex.pkl", "wb") as file:
-        pickle.dump(instructionsByName, file)
+        pickle.dump(instructionsByHex, file)
     with open("instructions/instructionsByName.pkl", "wb") as file:
         pickle.dump(instructionsByName, file)
 
