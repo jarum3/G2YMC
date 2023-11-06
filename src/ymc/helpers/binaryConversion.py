@@ -51,12 +51,12 @@ def signedIntToBinary(num: int) -> str:
 # Convert memory address to binary (Little-endian)
 def addrToBinary(num: int) -> str:
     bigEnd = f"{num:b}"[-16:].zfill(16) # Convert to binary, trim last 16 bits, zero fill to 16
-    littleEnd = bigEnd[8:16] + bigEnd[0:7]
+    littleEnd = bigEnd[8:] + bigEnd[:8]
     return littleEnd
 # Convert binary number to address (Little-endian)
 def BinaryToAddr(addr: str) -> int:
     clippedString: str = addr[-16:] # Trim to last 16 characters (16-bit addresses)
-    bigEnd = clippedString[8:16] + clippedString[0:7]
+    bigEnd = clippedString[8:] + clippedString[:8]
     placeValue: int = 2**15 # Start at 2^15 for place value
     value: int = 0 # Contains current value
     for char in bigEnd: # Loop through each bit
