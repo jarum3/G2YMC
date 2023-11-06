@@ -258,7 +258,7 @@ def jumpEqual(address: str) -> None:
 
 def addSubRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers) # Grab registers
-    regs[2] = rl.fourBitToRegister(extraRegister) # Grab third register
+    regs.append(rl.fourBitToRegister(extraRegister)) # Grab third register
     # Assign each register to a variable
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
