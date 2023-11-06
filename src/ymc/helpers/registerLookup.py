@@ -15,7 +15,7 @@ def fourBitToRegister(bits: str) -> str:
 
 # Returns list of both register strings
 def eightBitToRegisters(bits: str) -> list[str]:
-    returnList: list[str] = [] # Empty list initialization
+    returnList: list[str] = ["00000000"] * 2 # Empty list initialization
     returnList[0] = fourBitToRegister(bits[0:3]) # Grab first 4 bits register
     returnList[1] = fourBitToRegister(bits[4:7]) # Grab second 4 bits register
     return returnList # Return list
