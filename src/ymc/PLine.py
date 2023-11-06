@@ -11,15 +11,15 @@
 class PLine:
     def __init__(self, text):
         self.text: str = text
-        self.YMC_string: str | None = None # this will be updated by our switch statement
-        self.assembly_string: str | None = None
+        self.YMC_string: str = " " # this will be updated by our switch statement
+        self.assembly_string: str = " "
         self.registers: dict[str, bool] = {"EDX": False, "ECX": False, "EBX": False, "EAX": False}
         self.flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
         arithmetic: list[str] = ["=", "+", "-", "*", "/"]
+
         if self.text.startswith("signed" or "unsigned"): # delclaration
             self.type = 1
             self.isParent = False
-
         elif self.text.startswith("if" or "else" or "while"): # relational
             self.type = 3
             self.isParent = True
@@ -27,7 +27,6 @@ class PLine:
         elif any(x in self.text for x in arithmetic): # arithmetic
             self.type = 2
             self.isParent = False
-
         elif self.text.startswith("print"): # print
             self.type = 4
             self.isParent = False
@@ -46,4 +45,7 @@ class PLine:
         self.YMC_string = ymc
 
     def add_parent(self, parent):
-        self.parent = parent
+        self.parent: PLine = parent
+
+    def set_address(self, address):
+        self.address: int = address
