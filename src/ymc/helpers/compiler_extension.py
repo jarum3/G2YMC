@@ -14,13 +14,11 @@ program_counter: int = 0
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
 
-variables: dict[str, int] = {"a": 0, "b": 0, "c": 0, "x": 0, "y": 0, "z": 0}
-variables_declared: dict[str, bool] = {"a": False, "b": False, "c": False, "x": False, "y": False, "z": False}
+variables: dict[str, int] = {}
 
 size: int = 1024  # 1 kb is 1000 bytes
 default_value = 0  # Define the default value.
 memory = [default_value] * size
-
 # This stuff is for the switch statement
 
 ####################################
@@ -30,17 +28,15 @@ memory = [default_value] * size
 def declaration(pline_instance): # start by checking if signed or unsigned
 
     line_text = pline_instance.text # grab text from line instance
-    vars = line_text.split()   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
-    del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"
-                                        
+    vars = line_text.split(" ")   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
+    del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
+    ## TODO: Handle variable argument count (a, b vs. a, b, c)
     if line_text.startswith("signed"):    # start by checking if signed or unsigned
         flags["SF"] = True                # set flag to True if signed
-        for v in vars:               # go through each variable 
-            variables_declared[v] = True  # set a variable in dictionary to true 
+        variables[vars[1]] = 1023 - len(variables)
     elif line_text.startswith("unsigned"):
         flags["SF"] = False               # set flag to False if unsigned
-        for v in vars:                     # go through each variable in variables list
-            variables_declared[v] = True    # set a variable in dictionary to true 
+        variables[vars[1]] = 1023 - len(variables)
     return
 
 ##########################
