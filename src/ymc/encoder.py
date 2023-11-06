@@ -52,8 +52,8 @@ def main():
                             case "literal":
                                 if args[linePiece][0] == "-": # If number starts with negative, it definitely has to be signed
                                     binary.append(bc.signedIntToBinary(int(args[linePiece])))
-                                else: # Otherwise, interpreting as unsigned gives larger range 
-                                    binary.append(bc.unsignedIntToBinary(int(args[linePiece]))) 
+                                else: # Otherwise, interpreting as unsigned gives larger range
+                                    binary.append(bc.unsignedIntToBinary(int(args[linePiece])))
                         # Increment both list pointers forward
                         arg += 1
                         linePiece += 1
