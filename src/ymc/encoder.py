@@ -37,28 +37,24 @@ def main():
                 argTypes = instructions[currInstr].argTypes
                 if args and argTypes:  # Just making sure we have arguments to process
                     # Read argument types from instruction
-                    i = 0
-                    while i < len(args):  # Stop processing once we're done with arguments
-                        if (argTypes[i] == "memory"):  # Convert memory address to little-endian
-                            address = bc.addrToBinary(int(args[i]))
-                            binary.append(address[8:16])
-                            binary.append(address[0:8])
-                        elif argTypes[i] == "register":  # One register in one-byte
-                            binary.append(rl.registerToFourBit(args[i]))
-                        elif (argTypes[i] == "register-register"):  # Both registers to one-byte (Two arguments in one match)
-                            binary.append(rl.registersToEightBit(args[i], args[i + 1]))
-                            i += 1
-                        elif argTypes[i] == "literal":
-                            if args[i][0] == "-":
-                                binary.append(bc.signedIntToBinary(int(args[i])))
+                    arg = 0
+                    linePiece = 0
+                    while arg < len(argTypes):  # Stop processing once we're done with arguments
+                        if (argTypes[arg] == "memory"):  # Convert memory address to little-endian
+                            address = bc.addrToBinary(int(args[linePiece]))
+                            binary.append(address)
+                        elif argTypes[arg] == "register":  # One register in one-byte
+                            binary.append(rl.registerToFourBit(args[linePiece]))
+                        elif (argTypes[arg] == "register-register"):  # Both registers to one-byte (Two arguments in one match)
+                            binary.append(rl.registersToEightBit(args[linePiece], args[linePiece + 1]))
+                        elif argTypes[arg] == "literal":
+                            if args[linePiece][0] == "-":
+                                binary.append(bc.signedIntToBinary(int(args[linePiece])))
                             else:
-                                binary.append(bc.unsignedIntToBinary(int(args[i])))
-                        i += 1
+                                binary.append(bc.unsignedIntToBinary(int(args[linePiece])))
+                        arg += 1
+                        linePiece += 1
                 for byte in binary:
                     binaryString += byte
     with open("file.bin", "w") as file:
         file.write(binaryString)
-
-
-if __name__ == "__main__":
-    main()
