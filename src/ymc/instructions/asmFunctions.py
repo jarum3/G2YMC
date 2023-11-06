@@ -22,7 +22,7 @@ def outputUnsigned(register: str) -> None:
     print(bc.unsignedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
 
 
-# print a newline
+# print a newline, empty body accomplishes this
 def outputNewline() -> None:
     print("")
 
