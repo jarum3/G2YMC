@@ -11,7 +11,7 @@ import helpers.compiler_functions as cf
 
 program_counter: int = 0
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
-flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}  # I'm getting a runtime error here. It's goes away by adding ' ' around dict[str, bool] --Brad
+flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
 
 variables: dict[str, int] = {"a": 0, "b": 0, "c": 0, "x": 0, "y": 0, "z": 0}
 variables_declared: dict[str, bool] = {"a": False, "b": False, "c": False, "x": False, "y": False, "z": False}
@@ -22,10 +22,10 @@ memory = [default_value] * size
 
 # This stuff is for the switch statement
 
-##########################
+####################################
 # Variable Declaration
 # Brad K
-##########################
+####################################
 def declaration(pline_instance): # start by checking if signed or unsigned
 
     line_text = pline_instance.text # grab text from line instance
@@ -35,11 +35,11 @@ def declaration(pline_instance): # start by checking if signed or unsigned
     if line_text.startswith("signed"):    # start by checking if signed or unsigned
         flags["SF"] = True                # set flag to True if signed
         for v in vars:               # go through each variable 
-            variables_declared[v] = True  #set a variable in 
+            variables_declared[v] = True  # set a variable in dictionary to true 
     elif line_text.startswith("unsigned"):
         flags["SF"] = False               # set flag to False if unsigned
         for v in vars:                     # go through each variable in variables list
-            variables_declared[v] = True    #
+            variables_declared[v] = True    # set a variable in dictionary to true 
     return
 
 ##########################
@@ -137,18 +137,31 @@ def arithmetic(pline_instance): # assignment portion of flowchart
 
 def relational(pline_instance): # if/else and while statements, start by checking what each line is
     print("This is case 3")
-def printD(pline_instance): # print statements
-    line_text = pline_instance.text # grab text from line
-    split_line = line_text.split()   # split variables in line into list. Im not sure if there's going to be HLC with less than 3 variables
-    arg = split_line[1]             # delete signed/unsigned word from variables list
-    if arg is "/nl": 
+
+####################################
+# Print
+# Brad K
+####################################
+
+def printD(pline_instance):          # print statements
+    line_text = pline_instance.text  # grab text from line
+    split_line = line_text.split()   # split line into list.
+    arg = split_line[1]              # set arg to second item in split_line list
+    arg_value = variables[arg]       # grab value from variables dictionary using the print argument as the key
+    unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
+    signed = ["x","y","z"]
+    if arg is "/nl":                # check if new line
         pline_instance.set_YMC("outnl")
-    elif arg in variables:
-        pline_instance.set_YMC(arg) # still need to write code past this point
+    elif arg in signed:
+        pline_instance.set_YMC("outs {}".format(arg_value))  # set YMC instruction to outs [value] but I believe outu/outs needs to be followed by a register or hex value
+    elif arg in unsigned:
+        pline_instance.set_YMC("outu {}".format(arg_value)) 
+
 
 def default_case(pline_instance):
     print("This is the default case. Something went very wrong")    
 
+# Switch dictionary to call functions
 switch_dict = {
     1: declaration,
     2: arithmetic,
