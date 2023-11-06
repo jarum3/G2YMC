@@ -48,16 +48,19 @@ def main():
                                 binary.append(rl.registerToFourBit(args[linePiece]))
                             case "register-register": # Both registers to one-byte (Two arguments in one match)
                                 binary.append(rl.registersToEightBit(args[linePiece], args[linePiece + 1]))
-                                linePiece += 1 # We're grabbing two arguments
+                                linePiece += 1 # We're grabbing two arguments (this is why line piece and argument are counted separately)
                             case "literal":
                                 if args[linePiece][0] == "-": # If number starts with negative, it definitely has to be signed
                                     binary.append(bc.signedIntToBinary(int(args[linePiece])))
-                                else:
-                                    binary.append(bc.unsignedIntToBinary(int(args[linePiece]))) # Otherwise, interpreting as unsigned gives larger range 
+                                else: # Otherwise, interpreting as unsigned gives larger range 
+                                    binary.append(bc.unsignedIntToBinary(int(args[linePiece]))) 
+                        # Increment both list pointers forward
                         arg += 1
                         linePiece += 1
+                # Append current instruction to binary string
                 for byte in binary:
                     binaryString += byte
+    # Write binary string
     with open("file.bin", "w") as file:
         file.write(binaryString)
 
