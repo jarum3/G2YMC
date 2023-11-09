@@ -28,16 +28,13 @@ memory = [default_value] * size
 def declaration(pline_instance): # start by checking if signed or unsigned
 
     line_text = pline_instance.text # grab text from line instance
-    vars = line_text.split(" ")   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
+    vars = line_text.split()   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
-    ## TODO: Handle variable argument count (a, b vs. a, b, c)
-    if line_text.startswith("signed"):    # start by checking if signed or unsigned
-        flags["SF"] = True                # set flag to True if signed
-        variables[vars[1]] = 1023 - len(variables)
-    elif line_text.startswith("unsigned"):
-        flags["SF"] = False               # set flag to False if unsigned
-        variables[vars[1]] = 1023 - len(variables)
-    return
+    # I deleted if statement for signed or unsigned since it is only calculated during arithmetic/compare
+    for v in vars:
+            dec_count = len(variables) + 1                 # set declaration count to length of variables (0)  + 1 = 1
+            variables[v] = len(memory) - dec_count       # set variables[v] equal to length of memory - declaration count
+    return                          # EX: "Unsigned a b c" would have v = "a", len(memory) = 1024, len(variables) = 0, dec_count = 1, variables["x"] = 1024 - 1. Repeat for b and c.
 
 ##########################
 # Arithmetic operations and Assignments
@@ -188,21 +185,24 @@ def relational(pline_instance): # if/else and while statements, start by checkin
 ####################################
 # Print
 # Brad K
+# TODO: Convert -[hex value] to [hex signed] EX: 0x7F = 127 AND 0x80 = -128
+#                   In other words, change str(hex(arg_value)) to a function I'll create in compiler functions to return correct signed hex
 ####################################
 
 def printD(pline_instance):          # print statements
     line_text = pline_instance.text  # grab text from line
     split_line = line_text.split()   # split line into list.
     arg = split_line[1]              # set arg to second item in split_line list
-    arg_value = variables[arg]       # grab value from variables dictionary using the print argument as the key
+    arg_value = memory[variables[arg]]     # grab memory location from variables dictionary and get value from memory list
     unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
     signed = ["x","y","z"]
+
     if arg is "/nl":                # check if new line
         pline_instance.set_YMC("outnl")
-    elif arg in signed:
-        pline_instance.set_YMC("outs {}".format(arg_value))  # set YMC instruction to outs [value] but I believe outu/outs needs to be followed by a register or hex value
     elif arg in unsigned:
-        pline_instance.set_YMC("outu {}".format(arg_value)) 
+        pline_instance.set_YMC("movrm eax, " + str(hex(arg_value)) + "\n" + "outs eax" )   # set YMC instruction to first move hex(arg_value) to register eax, then outs eax 
+    elif arg in signed:
+        pline_instance.set_YMC("movrm eax, " + str(hex(arg_value)) + "\n" + "outu eax") # set YMC instruction to first move hex(arg_value) to register eax, then outu eax
 
 
 def default_case(pline_instance):
