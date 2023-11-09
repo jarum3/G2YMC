@@ -26,12 +26,12 @@ memory = [default_value] * size
 # Brad K
 ####################################
 def declaration(pline_instance): # start by checking if signed or unsigned
-    line_text = pline_instance.text # grab text from line instance
-    vars = line_text.split()   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
+    line_text: str = pline_instance.text # grab text from line instance
+    vars: list[str] = line_text.split()  # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
     # I deleted if statement for signed or unsigned since it is only calculated during arithmetic/compare
     for v in vars:
-            dec_count = len(variables) + 1                 # set declaration count to length of variables (0)  + 1 = 1
+            dec_count = len(variables) + 1                 # set declaration count to length of variables (0) + 1 = 1
             variables[v] = len(memory) - dec_count       # set variables[v] equal to length of memory - declaration count
     return                          # EX: "Unsigned a b c" would have v = "a", len(memory) = 1024, len(variables) = 0, dec_count = 1, variables["x"] = 1024 - 1. Repeat for b and c.
 
@@ -196,8 +196,6 @@ def relational(pline_instance): # if/else and while statements, start by checkin
 
 def printD(pline_instance):          # print statements
     line_text = pline_instance.text  # grab text from line
-    split_line = line_text.split()   # split line into list.
-    arg = split_line[1]              # set arg to second item in split_line list
     statement = line_text.split()   # split line into list.
     arg = statement[1]              # set arg to second item in split_line list
     unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
@@ -209,12 +207,14 @@ def printD(pline_instance):          # print statements
     if arg is "\n":                # check if new line
         pline_instance.set_YMC("outnl") 
     elif arg in unsigned:           # else if arg is an unsigned variable
-        pline_instance.set_YMC("movrm eax, " + str(arg_location) + " \n" + "outs eax" )   # set YMC instruction to first move arg_location to register eax, then outs eax 
+        pline_instance.set_YMC("movrm eax, " + str(arg_location))   # set YMC instruction to first move arg_location to register eax, then outs eax 
+        pline_instance.append_YMC("outs eax")
     elif arg in signed:           # else if arg is a signed variable
-        pline_instance.set_YMC("movrm eax, " + str(arg_location) + " \n" + "outu eax")  # same as unsigned but with 'outu eax'
+        pline_instance.set_YMC("movrm eax, " + str(arg_location)) # same as unsigned but with 'outu eax'
+        pline_instance.append_YMC("outu eax")
     else:                          # any other case is literal (Cases: Print [variable: a, b, c, x, y ,z], Print [Literal: -7, -3, 0, 5, 9])                                                    
         if arg[0] is '-':           # check if literal is negative
-            pline_instance.set_YMC("movrl eax, " + str(arg) )      # set YMC instruction to move literal arg to register eax
+            pline_instance.set_YMC("movrl eax, " + str(arg))      # set YMC instruction to move literal arg to register eax
             pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         else:                       # else it is positive
             pline_instance.set_YMC("movrl eax, " + str(arg))       # set YMC instruction to move literal arg to register eax
