@@ -198,7 +198,8 @@ def printD(pline_instance):          # print statements
     line_text = pline_instance.text  # grab text from line
     split_line = line_text.split()   # split line into list.
     arg = split_line[1]              # set arg to second item in split_line list
-    arg_value = memory[variables[arg]]     # grab memory location from variables dictionary and get value from memory list
+    statement = line_text.split()   # split line into list.
+    arg = statement[1]              # set arg to second item in split_line list
     unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
     signed = ["x","y","z"]
 
