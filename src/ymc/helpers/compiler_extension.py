@@ -26,7 +26,6 @@ memory = [default_value] * size
 # Brad K
 ####################################
 def declaration(pline_instance): # start by checking if signed or unsigned
-
     line_text = pline_instance.text # grab text from line instance
     vars = line_text.split()   # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
@@ -180,6 +179,12 @@ def arithmetic(pline_instance): # assignment portion of flowchart
                 print("Handle unsigned division here")
 
 def relational(pline_instance): # if/else and while statements, start by checking what each line is
+    line_text = pline_instance.text  # grab text from line
+    statement = line_text.split()   # split line into list.
+    # TODO: If/Else - Terry
+    # TODO: While - Brad
+    # Both of our parts should first be split up into 3 if/elif statements and one else statement checking for what kind of statement it is; 
+                                                                                                # if none --> else: check for parent and perform instructions
     print("This is case 3")
 
 ####################################
@@ -197,13 +202,22 @@ def printD(pline_instance):          # print statements
     unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
     signed = ["x","y","z"]
 
-    if arg is "/nl":                # check if new line
-        pline_instance.set_YMC("outnl")
-    elif arg in unsigned:
-        pline_instance.set_YMC("movrm eax, " + str(hex(arg_value)) + "\n" + "outs eax" )   # set YMC instruction to first move hex(arg_value) to register eax, then outs eax 
-    elif arg in signed:
-        pline_instance.set_YMC("movrm eax, " + str(hex(arg_value)) + "\n" + "outu eax") # set YMC instruction to first move hex(arg_value) to register eax, then outu eax
+    if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
+        arg_location = variables[arg]   # set location of arg to value in dictionary
 
+    if arg is "\n":                # check if new line
+        pline_instance.set_YMC("outnl") 
+    elif arg in unsigned:           # else if arg is an unsigned variable
+        pline_instance.set_YMC("movrm eax, " + str(arg_location) + " \n" + "outs eax" )   # set YMC instruction to first move arg_location to register eax, then outs eax 
+    elif arg in signed:           # else if arg is a signed variable
+        pline_instance.set_YMC("movrm eax, " + str(arg_location) + " \n" + "outu eax")  # same as unsigned but with 'outu eax'
+    else:                          # any other case is literal (Cases: Print [variable: a, b, c, x, y ,z], Print [Literal: -7, -3, 0, 5, 9])                                                    
+        if arg[0] is '-':           # check if literal is negative
+            pline_instance.set_YMC("movrl eax, " + str(arg) + " \n" + "outs eax")      # set YMC instruction to first move arg_location to register eax, then outu eax
+        else:                       # else it is positive
+            pline_instance.set_YMC("movrl eax, " + str(arg) + " \n" + "outu eax") 
+   
+    program_counter += 1                 # Increase program counter by 1
 
 def default_case(pline_instance):
     print("This is the default case. Something went very wrong")    
