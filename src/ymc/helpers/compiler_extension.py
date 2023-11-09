@@ -214,9 +214,11 @@ def printD(pline_instance):          # print statements
         pline_instance.set_YMC("movrm eax, " + str(arg_location) + " \n" + "outu eax")  # same as unsigned but with 'outu eax'
     else:                          # any other case is literal (Cases: Print [variable: a, b, c, x, y ,z], Print [Literal: -7, -3, 0, 5, 9])                                                    
         if arg[0] is '-':           # check if literal is negative
-            pline_instance.set_YMC("movrl eax, " + str(arg) + " \n" + "outs eax")      # set YMC instruction to first move arg_location to register eax, then outu eax
+            pline_instance.set_YMC("movrl eax, " + str(arg) )      # set YMC instruction to move literal arg to register eax
+            pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         else:                       # else it is positive
-            pline_instance.set_YMC("movrl eax, " + str(arg) + " \n" + "outu eax") 
+            pline_instance.set_YMC("movrl eax, " + str(arg))       # set YMC instruction to move literal arg to register eax
+            pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
    
     program_counter += 1                 # Increase program counter by 1
 
