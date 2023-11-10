@@ -25,7 +25,7 @@ memory = [default_value] * size
 # Variable Declaration
 # Brad K
 ####################################
-def declaration(pline_instance): # start by checking if signed or unsigned
+def declaration(pline_instance: PLine): # start by checking if signed or unsigned
     line_text: str = pline_instance.text # grab text from line instance
     vars: list[str] = line_text.split()  # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
@@ -38,11 +38,8 @@ def declaration(pline_instance): # start by checking if signed or unsigned
 ##########################
 # Arithmetic operations and Assignments
 # Jacob Duncan
-# TODO: Handle the memroy addresses. Will have to have a discussion about how we are handling memory
-# TODO: Handle modified flags
-# TODO: Finish 3-arg arithmetic. I don't think we specified what the YMC instruction would be if it were two of the same operators (i.e: a + b + c, we do not have an instruction to handle this)
 ##########################
-def arithmetic(pline_instance): # assignment portion of flowchart
+def arithmetic(pline_instance: PLine): # assignment portion of flowchart
     line_text = pline_instance.text # grab text from line
     vars = line_text.split()   # split variables in line into list. Im not sure if there's going to be HLC with less than 3 variables
 
@@ -50,19 +47,23 @@ def arithmetic(pline_instance): # assignment portion of flowchart
     del vars[0]     # delete the variable being assiged cause its stored 
     del vars[0]     # delete the = sign
 
+    pline_instance.set_address(program_counter) # Set the address of the first YMC instruction associated with the pline
+
     temp_ymc: str
 
     # Handle assignments here
-    # TODO: Handle memory
     if len(vars) == 1: # this means that this is just an assingment operation with no arithmetic
         if any(char.isdigit() for char in vars[0]): # literal
-            variables[assignment] = int(vars[0]) # set varible to desired value
             temp_ymc = "movrl eax, " + vars[0] + "\n"
+            program_counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
         else:
-            variables[assignment] = variables[vars[0]] # variable
-            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
+            temp_ymc = "movrm eax, " + str(variables[vars[0]]) + "\n"
+            program_counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
         
-        temp_ymc += "movmr , eax\n" # TODO: Add the address
+        temp_ymc += "movmr " + str(variables[assignment]) + ", eax\n"
+        program_counter += 4 # movmr is 4 bytes, so we increment the program_counter by 4
+
+        # Set modified registers and ymc
         pline_instance.set_register("EAX")
         pline_instance.set_YMC(temp_ymc)
         return
@@ -70,115 +71,59 @@ def arithmetic(pline_instance): # assignment portion of flowchart
     isSigned: bool = False
 
     # Handle 2-arg arithmetic
-    # TODO: Handle memory and modified flags
     if len(vars) == 3: # this means it is a 2-arg operation, var[0] = arg1, var[1] = operator, var[2] = arg2
         arguments: list[int] = cf.set2args(vars, variables)
         operator: str = vars[1]
         if arguments[0] or arguments[1] < 0:
                 isSigned = True
 
-        # Process first line of ymc
-        if any(char.isdigit() for char in vars[0]): # literal
-            temp_ymc = "movrl eax, " + vars[0] + "\n"
-        else: # variable
-            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
-        pline_instance.set_register("EAX")
-        # Process second line of ymc
-        if any(char.isdigit() for char in vars[2]): # literal
-            temp_ymc += "movrl ebx, " + vars[2] + "\n"
-        else: # variable
-            temp_ymc += "movrm ebx, " + "\n"# TODO: Add the address
-        pline_instance.set_register("EBX")
+        temp_counter: int = 0
+        # Process first 2 lines of ymc
+        temp_ymc = cf.ymc_arithemtic_movs(vars, variables, False, temp_counter)
+        program_counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
 
         # Parse operators and process third line of ymc
-        if operator == "+":
-            variables[assignment] = arguments[0] + arguments[1]
-            temp_ymc += "add eax, ebx\n"
-        elif operator == "-":
-            variables[assignment] = arguments[0] - arguments[1]
-            temp_ymc += "sub eax, ebx\n"
-        elif operator == "*":
-            variables[assignment] = arguments[0] * arguments[1]
-            if isSigned == True:
-                temp_ymc += "smul eax, ebx\n"
-            else:
-                temp_ymc += "mul eax, ebx\n"
-        elif operator == "/":
-            variables[assignment] = math.floor(arguments[0] / arguments[1])
-            if isSigned == True:
-                temp_ymc += "sdiv eax, ebx\n"
-            else:
-                temp_ymc += "div eax, ebx\n"
+        temp_ymc += cf.ymc_operation_2args(operator, isSigned)
+        program_counter += 2 # All 2 arg arithmetic operations are 2 bytes
 
-        temp_ymc += "movmr , eax\n" # TODO: Add the address
+        # Process fourth and final line of ymc
+        temp_ymc += "movmr " + str(variables[assignment]) + ", eax\n" 
+        program_counter += 4 # movmr is 4 bytes, so we increment the program_counter by 4
+
+        # Set modified registers and ymc
+        pline_instance.set_register("EAX")
+        pline_instance.set_register("EBX")
         pline_instance.set_YMC(temp_ymc)
         return
 
     # Handle 3-arg arithmetic
-    # TODO: Handle memory and modified flags, finish translating to YMC
     elif len(vars) == 5: # this means it is 3-arg operation
         arguments: list[int] = cf.set3args(vars, variables)
         operators: list[str] = [vars[1], vars[3]]
         if arguments[0] or arguments[1] or arguments[2] < 0:
                 isSigned = True
 
-        # Process first line of ymc
-        if any(char.isdigit() for char in vars[0]): # literal
-            temp_ymc = "movrl eax, " + vars[0] + "\n"
-        else: # variable
-            temp_ymc = "movrm eax, " + "\n"# TODO: Add the address
+        temp_counter: int = 0
+        # Process first 3 lines of ymc
+        temp_ymc = cf.ymc_arithemtic_movs(vars, variables, True, temp_counter)
+        program_counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
+
+        # Parse operators and process fourth line of ymc
+        temp_ymc += cf.ymc_operation_3args(operators, isSigned)
+        program_counter += 3 # All 3 arg arithmetic operations are 3 bytes
+
+        # Process fifth and final line of ymc
+        temp_ymc += "movmr " + str(variables[assignment]) + ", eax\n" 
+        program_counter += 4 # movmr is 4 bytes, so we increment the program_counter by 4
+
+        # Set modified registers and ymc
         pline_instance.set_register("EAX")
-        # Process second line of ymc
-        if any(char.isdigit() for char in vars[2]): # literal
-            temp_ymc += "movrl ebx, " + vars[2] + "\n"
-        else: # variable
-            temp_ymc += "movrm ebx, " + "\n"# TODO: Add the address
         pline_instance.set_register("EBX")
-        # Process third line of ymc
-        if any(char.isdigit() for char in vars[4]): # literal
-            temp_ymc += "movrl ecx, " + vars[4] + "\n"
-        else: # variable
-            temp_ymc += "movrm ecx, " + "\n"# TODO: Add the address
         pline_instance.set_register("ECX")
+        pline_instance.set_YMC(temp_ymc)
+        return
 
-        # Handle first operation. Operations are evaluated left to right, so we use the first two arguments here
-        # When done, the result of the first operation will be stored in the destination variable for the time being
-        if operators[0] == "+":
-            variables[assignment] = arguments[0] + arguments[1]
-        elif operators[0] == "-":
-            variables[assignment] = arguments[0] - arguments[1]
-        elif operators[0] == "*":
-            variables[assignment] = arguments[0] * arguments[1]
-            if isSigned == True:
-                print("Handle signed multiplication here")
-            else:
-                print("Handle unsigned multiplication here")
-        elif operators[0] == "/":
-            variables[assignment] = math.floor(arguments[0] / arguments[1])
-            if isSigned == True:
-                print("Handle signed division here")
-            else:
-                print("Handle unsigned division here")
-
-        # Handle second operation. Result of first op is stored in destination variable, so the operation is done on the variable and the third argument
-        if operators[1] == "+":
-            variables[assignment] = variables[assignment] + arguments[2]
-        elif operators[1] == "-":
-            variables[assignment] = variables[assignment] - arguments[2]
-        elif operators[1] == "*":
-            variables[assignment] = variables[assignment] * arguments[2]
-            if isSigned == True:
-                print("Handle signed multiplication here")
-            else:
-                print("Handle unsigned multiplication here")
-        elif operators[1] == "/":
-            variables[assignment] = math.floor(variables[assignment] / arguments[2])
-            if isSigned == True:
-                print("Handle signed division here")
-            else:
-                print("Handle unsigned division here")
-
-def relational(pline_instance): # if/else and while statements, start by checking what each line is
+def relational(pline_instance: PLine): # if/else and while statements, start by checking what each line is
     line_text = pline_instance.text  # grab text from line
     statement = line_text.split()   # split line into list.
     # TODO: If/Else - Terry
@@ -194,7 +139,7 @@ def relational(pline_instance): # if/else and while statements, start by checkin
 #                   In other words, change str(hex(arg_value)) to a function I'll create in compiler functions to return correct signed hex
 ####################################
 
-def printD(pline_instance):          # print statements
+def printD(pline_instance: PLine):          # print statements
     line_text = pline_instance.text  # grab text from line
     statement = line_text.split()   # split line into list.
     arg = statement[1]              # set arg to second item in split_line list
@@ -222,7 +167,7 @@ def printD(pline_instance):          # print statements
    
     program_counter += 1                 # Increase program counter by 1
 
-def default_case(pline_instance):
+def default_case(pline_instance: PLine):
     print("This is the default case. Something went very wrong")    
 
 # Switch dictionary to call functions

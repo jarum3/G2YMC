@@ -47,7 +47,6 @@ class PLine:
     def append_YMC(self, ymc: str): # this is how we will store the YMC string
             self.YMC_string += "\n" + ymc
 
-
     def add_parent(self, parent):
         self.parent: PLine = parent
 
