@@ -30,9 +30,9 @@ def set2args(vars: list[str], variables: dict[str, int]) -> list[int]:
     else:
         args[0] = variables[vars[0]]
     if any(char.isdigit() for char in vars[2]): # processing second argument
-        args[0] = int(vars[2])
+        args[1] = int(vars[2])
     else:
-        args[0] = variables[vars[2]]
+        args[1] = variables[vars[2]]
     return args
 
 def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
@@ -42,13 +42,13 @@ def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
     else:
         args[0] = variables[vars[0]]
     if any(char.isdigit() for char in vars[2]): # processing second argument
-        args[0] = int(vars[2])
+        args[1] = int(vars[2])
     else:
-        args[0] = variables[vars[2]]
+        args[1] = variables[vars[2]]
     if any(char.isdigit() for char in vars[4]): # processing third argument
-        args[0] = int(vars[4])
+        args[2] = int(vars[4])
     else:
-        args[0] = variables[vars[4]]
+        args[2] = variables[vars[4]]
     return args
 
 def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool):
