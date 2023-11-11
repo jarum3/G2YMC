@@ -19,7 +19,7 @@ def main():
     # Creation of line list, i.e. list that contains a PLine object for every line in the file
     pline_list: list[PLine] = [default_value1] * line_count
 
-    i = 0
+    i: int = 0
     try:
         with open(file_path, 'r') as file: # the r here means read only mode
             # Iterate over each line in the file

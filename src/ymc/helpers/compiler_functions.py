@@ -16,14 +16,14 @@ def get_number_of_lines(file_path) -> int:
     return 0
 
 # Setting the parent of the each line instance
-def set_parent(pline_instance, pline_list, i):
-    prev_line = pline_list[i - 1]
+def set_parent(pline_instance: PLine, pline_list: list[PLine], i: int):
+    prev_line: PLine = pline_list[i - 1]
     if not prev_line.isParent:
         pline_instance.add_parent(prev_line.parent)
         return
     pline_instance.add_parent(prev_line)
 
-def set2args(vars, variables) -> list[int]:
+def set2args(vars: list[str], variables: dict[str, int]) -> list[int]:
     args = [0, 0]
     if any(char.isdigit() for char in vars[0]): # processing first argument
             args[0] = int(vars[0])
@@ -35,7 +35,7 @@ def set2args(vars, variables) -> list[int]:
         args[0] = variables[vars[2]]
     return args
 
-def set3args(vars, variables) -> list[int]:
+def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
     args = [0, 0, 0]
     if any(char.isdigit() for char in vars[0]): # processing first argument
             args[0] = int(vars[0])
@@ -51,34 +51,36 @@ def set3args(vars, variables) -> list[int]:
         args[0] = variables[vars[4]]
     return args
 
-def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool, counter) -> str:
+def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool):
     mov_lines: str
+    counter: int = 0
+    address: list[str] = [str(variables[vars[0]]), str(variables[vars[2]])] # This is one of the ugliest things I have ever seen.
     # Process first line of ymc
     if any(char.isdigit() for char in vars[0]): # literal
         mov_lines = "movrl eax, " + vars[0] + "\n"
         counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
     else: # variable
-        mov_lines = "movrm eax, " + str(variables[vars[0]]) + "\n"
+        mov_lines = "movrm eax, " + address[0] + "\n"
         counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
     # Process second line of ymc
     if any(char.isdigit() for char in vars[2]): # literal
         mov_lines += "movrl ebx, " + vars[2] + "\n"
         counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
     else: # variable
-        mov_lines += "movrm ebx, " + str(variables[vars[2]]) + "\n"
+        mov_lines += "movrm ebx, " + address[1] + "\n"
         counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
 
-    # Check if arithmetic is 3 arguements
+    # CProcess third line of ymc if necessary
     if is3args == True:
-        # Process third line of ymc
+        address.append(str(variables[vars[4]]))
         if any(char.isdigit() for char in vars[4]): # literal
             mov_lines += "movrl ecx, " + vars[4] + "\n"
             counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
         else: # variable
-            mov_lines += "movrm ecx, " + str(variables[vars[4]]) + "\n"
+            mov_lines += "movrm ecx, " + address[2] + "\n"
             counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
-
-    return mov_lines
+    
+    return mov_lines, counter
 
 def ymc_operation_2args(operator: str, isSigned: bool) -> str:
     operation_line: str

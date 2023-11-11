@@ -19,7 +19,6 @@ variables: dict[str, int] = {}
 size: int = 1024  # 1 kb is 1000 bytes
 default_value = 0  # Define the default value.
 memory = [default_value] * size
-# This stuff is for the switch statement
 
 ####################################
 # Variable Declaration
@@ -40,10 +39,10 @@ def declaration(pline_instance: PLine): # start by checking if signed or unsigne
 # Jacob Duncan
 ##########################
 def arithmetic(pline_instance: PLine): # assignment portion of flowchart
-    line_text = pline_instance.text # grab text from line
-    vars = line_text.split()   # split variables in line into list. Im not sure if there's going to be HLC with less than 3 variables
+    line_text: str = pline_instance.text # grab text from line
+    vars: list[str] = line_text.split()   # split variables in line into list.
 
-    assignment: str = vars[0]
+    assignment: str = vars[0] # get variable we are assigning a value to
     del vars[0]     # delete the variable being assiged cause its stored 
     del vars[0]     # delete the = sign
 
@@ -53,11 +52,12 @@ def arithmetic(pline_instance: PLine): # assignment portion of flowchart
 
     # Handle assignments here
     if len(vars) == 1: # this means that this is just an assingment operation with no arithmetic
+        address: str = str(variables[vars[0]])
         if any(char.isdigit() for char in vars[0]): # literal
             temp_ymc = "movrl eax, " + vars[0] + "\n"
             program_counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
         else:
-            temp_ymc = "movrm eax, " + str(variables[vars[0]]) + "\n"
+            temp_ymc = "movrm eax, " + address + "\n"
             program_counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
         
         temp_ymc += "movmr " + str(variables[assignment]) + ", eax\n"
@@ -77,9 +77,9 @@ def arithmetic(pline_instance: PLine): # assignment portion of flowchart
         if arguments[0] or arguments[1] < 0:
                 isSigned = True
 
-        temp_counter: int = 0
+        temp_counter: int
         # Process first 2 lines of ymc
-        temp_ymc = cf.ymc_arithemtic_movs(vars, variables, False, temp_counter)
+        temp_ymc, temp_counter = cf.ymc_arithemtic_movs(vars, variables, False)
         program_counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
 
         # Parse operators and process third line of ymc
@@ -105,7 +105,7 @@ def arithmetic(pline_instance: PLine): # assignment portion of flowchart
 
         temp_counter: int = 0
         # Process first 3 lines of ymc
-        temp_ymc = cf.ymc_arithemtic_movs(vars, variables, True, temp_counter)
+        temp_ymc, temp_counter = cf.ymc_arithemtic_movs(vars, variables, True)
         program_counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
 
         # Parse operators and process fourth line of ymc
