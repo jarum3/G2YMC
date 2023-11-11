@@ -124,13 +124,33 @@ def arithmetic(pline_instance: PLine): # assignment portion of flowchart
         return
 
 def relational(pline_instance: PLine): # if/else and while statements, start by checking what each line is
-    line_text = pline_instance.text  # grab text from line
-    statement = line_text.split()   # split line into list.
+    line_text: str = pline_instance.text  # grab text from line
+    line_list: list[str] = line_text.split()   # split line into list.
+    type: str = line_list[0] 
+    if type == "if":            # check if line is if/else statement or while loop                                                                 
+        print("Code for if goes here") # TODO: Terry
+    elif type == "else":                                                                 
+        print("Code for else goes here") # TODO: Terry 
+    elif type == "While":                                                                 
+        variable = line_list[1]
+        sign = line_list[2]
+        limit = line_list[3]
+        # TODO: Determine how to find location of jump and 
+        if sign == '=':                                      
+            print("Code for equal loop goes here")
+        elif sign == '!=':                                                                 
+            print("Code for not equal loop goes here")
+        elif sign == '<':                                                                 
+            print("Code for less than loop goes here")
+        elif sign == '<=':                                                                 
+            print("Code for less than or equal loop goes here")
+        elif sign == '>':                                                                
+            print("Code for greater than loop goes here")
+        elif sign == '>=':                                                                 
+            print("Code for greater than or equal loop goes here")
     # TODO: If/Else - Terry
     # TODO: While - Brad
     # Both of our parts should first be split up into 3 if/elif statements and one else statement checking for what kind of statement it is; 
-                                                                                                # if none --> else: check for parent and perform instructions
-    print("This is case 3")
 
 ####################################
 # Print
@@ -140,33 +160,36 @@ def relational(pline_instance: PLine): # if/else and while statements, start by 
 ####################################
 
 def printD(pline_instance: PLine):          # print statements
-    line_text = pline_instance.text  # grab text from line
-    statement = line_text.split()   # split line into list.
-    arg = statement[1]              # set arg to second item in split_line list
-    unsigned = ["a","b","c"]         # declare signed and unsigned lists for if statements below
-    signed = ["x","y","z"]
+    line_text: str = pline_instance.text  # grab text from line
+    statement: list[str] = line_text.split()   # split line into list.
+    arg: str = statement[1]              # set arg to second item in split_line list
+    unsigned: list[str] = ["a","b","c"]         # declare signed and unsigned lists for if statements below
+    signed: list[str] = ["x","y","z"]
+    
+    pline_instance.set_address(program_counter)
 
     if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
-        arg_location = variables[arg]   # set location of arg to value in dictionary
+        arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
 
-    if arg is "\n":                # check if new line
+    if arg == "\n":                # check if new line
         pline_instance.set_YMC("outnl") 
+        program_counter += 1                 # Increase program counter by 1 (outnl [1 byte])
     elif arg in unsigned:           # else if arg is an unsigned variable
-        pline_instance.set_YMC("movrm eax, " + str(arg_location))   # set YMC instruction to first move arg_location to register eax, then outs eax 
+        pline_instance.set_YMC("movrm eax, " + arg_location)   # set YMC instruction to first move arg_location to register eax, then outs eax 
         pline_instance.append_YMC("outs eax")
+        program_counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
     elif arg in signed:           # else if arg is a signed variable
-        pline_instance.set_YMC("movrm eax, " + str(arg_location)) # same as unsigned but with 'outu eax'
+        pline_instance.set_YMC("movrm eax, " + arg_location) # same as unsigned but with 'outu eax'
         pline_instance.append_YMC("outu eax")
-    else:                          # any other case is literal (Cases: Print [variable: a, b, c, x, y ,z], Print [Literal: -7, -3, 0, 5, 9])                                                    
-        if arg[0] is '-':           # check if literal is negative
-            pline_instance.set_YMC("movrl eax, " + str(arg))      # set YMC instruction to move literal arg to register eax
-            pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
-        else:                       # else it is positive
-            pline_instance.set_YMC("movrl eax, " + str(arg))       # set YMC instruction to move literal arg to register eax
-            pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
-   
-    program_counter += 1                 # Increase program counter by 1
-
+        program_counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
+    elif arg[0] is '-':           # check if literal is negative
+        pline_instance.set_YMC("movrl eax, " + arg)      # set YMC instruction to move literal arg to register eax
+        pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
+        program_counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
+    else:                       # else it is positive
+        pline_instance.set_YMC("movrl eax, " + arg)       # set YMC instruction to move literal arg to register eax
+        pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
+        program_counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
 def default_case(pline_instance: PLine):
     print("This is the default case. Something went very wrong")    
 
