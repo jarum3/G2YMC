@@ -16,6 +16,7 @@ class PLine:
         self.registers: dict[str, bool] = {"EDX": False, "ECX": False, "EBX": False, "EAX": False}
         self.flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
         arithmetic: list[str] = ["=", "+", "-", "*", "/"]
+        self.is_end_block: bool = False
 
         if self.text.startswith("signed" or "unsigned"): # delclaration
             self.type = 1
@@ -52,3 +53,6 @@ class PLine:
 
     def set_address(self, address):
         self.address: int = address
+
+    def set_end_block(self):
+        self.is_end_block = True
