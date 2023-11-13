@@ -26,7 +26,6 @@ def declaration(pline_instance: PLine) -> int: # start by checking if signed or 
     # I deleted if statement for signed or unsigned since it is only calculated during arithmetic/compare
     for v in vars:
             dec_count = len(variables) + 1                 # set declaration count to length of variables (0) + 1 = 1
-            variables[v] = len(memory) - dec_count       # set variables[v] equal to length of memory - declaration count
             variables[v] = 1024 - dec_count       # set variables[v] equal to length of memory - declaration count
     return 0                        # EX: "Unsigned a b c" would have v = "a", len(memory) = 1024, len(variables) = 0, dec_count = 1, variables["x"] = 1024 - 1. Repeat for b and c.
 
