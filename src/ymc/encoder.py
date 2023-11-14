@@ -65,10 +65,8 @@ def main():
         for line in file:
             # Loop through lines of input files
             binary = getBinaryFromLine(line, instructions)
-            print(binary)
             if binary:
                 binaryString += binary
-    print(binaryString)
     # Write binary string
     with open("file.bin", "w") as file:
         file.write(binaryString)
