@@ -39,7 +39,7 @@ def main():
                 if pline_instance.text.startswith('   '):
                     cf.set_parent(pline_instance, pline_list, i)
                     next_line = next(file)
-                    if (next_line.strip().isspace()): # if next line is blank and it has a parent, then it is the last line in the code block
+                    if (next_line.strip().isspace() or not next_line.startswith('   ')): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
                         pline_instance.set_end_block()
 
                 i += 1
