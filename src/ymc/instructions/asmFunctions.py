@@ -5,17 +5,19 @@
 # Necessary for encoder to properly debug
 ###############################
 
-import instructions.YMCCPU as cpu # Using CPU registers/flags/memory
-import helpers.registerLookup as rl # Using register lookups
-import helpers.binaryConversion as bc # Using binary conversions
-from helpers.setFlags import setFlags # Setting flags in arithmetic instructions
-import math # For rounding from division
+import instructions.YMCCPU as cpu  # Using CPU registers/flags/memory
+import helpers.registerLookup as rl  # Using register lookups
+import helpers.binaryConversion as bc  # Using binary conversions
+from helpers.setFlags import setFlags  # Setting flags in arithmetic instructions
+import math  # For rounding from division
 
 ## Special instructions
+
 
 # print the signed representation of the CPU register pointed to by the register byte
 def outputSigned(register: str) -> None:
     print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
+
 
 # print the unsigned representation of the CPU register pointed to by the register byte
 def outputUnsigned(register: str) -> None:
@@ -26,7 +28,9 @@ def outputUnsigned(register: str) -> None:
 def outputNewline() -> None:
     print("")
 
+
 ## Mov instructions
+
 
 # Grabs value from right register, puts it into left register
 def movRegisterRegister(registers: str) -> None:
@@ -178,7 +182,6 @@ def sDivRegisterMemory(register: str, memory: str) -> None:
     cpu.flags = setFlags(result)
 
 
-
 ## Compare instructions
 
 # Compares are exactly the same as subtracts, but don't store their values.
@@ -207,34 +210,41 @@ def compareRegisterMemory(register: str, memory: str) -> None:
 # Only if the conditional is met. Conditional is verified using flags
 #####################################################
 
+
 # No check
 def unconditionalJump(address: str) -> None:
     cpu.instructionPointer = bc.BinaryToAddr(address)
+
 
 # Not SF and not ZF -> Greater
 def jumpGreater(address: str) -> None:
     if cpu.flags["SF"] == False and cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
+
 # Not SF -> Greater than or equal to
 def jumpGreaterEqual(address: str) -> None:
     if cpu.flags["SF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
+
 
 # SF = less-than
 def jumpLess(address: str) -> None:
     if cpu.flags["SF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
+
 # SF or ZF -> less-than or equal
 def JumpLessEqual(address: str) -> None:
     if cpu.flags["SF"] or cpu.flags["ZF"]:
         cpu.instructionPointer = bc.BinaryToAddr(address)
 
+
 # Not ZF -> not equal
 def jumpNotEqual(address: str) -> None:
     if cpu.flags["ZF"] == False:
         cpu.instructionPointer = bc.BinaryToAddr(address)
+
 
 # ZF -> Equal
 def jumpEqual(address: str) -> None:
@@ -251,22 +261,37 @@ def jumpEqual(address: str) -> None:
 #    Flags should be set as they would be for only the right operation (a * b + c sets flags for adding, not multiplication)
 #####################################################
 
+
 ## All of these are almost identical except for:
 # Signed vs. Unsigned (mul vs smul, div vs sdiv)
 # Arithmetic operators (specific to instruction)
 # Flags set for right operation, args should be (result, [True if addition, False if subtraction], [(b <c) if subtraction])
+def addAddRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)  # Grab registers
+    regs.append(rl.fourBitToRegister(extraRegister))  # Grab third register
+    # Assign each register to a variable
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a + b  # Do the first arithmetic operation
+    result += (
+        c  # Do the second arithmetic operation (Preserves lack of order-of-operations)
+    )
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result, True)
+
 
 def addSubRegisters(registers: str, extraRegister: str) -> None:
-    regs: list[str] = rl.eightBitToRegisters(registers) # Grab registers
-    regs.append(rl.fourBitToRegister(extraRegister)) # Grab third register
-    # Assign each register to a variable
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
     a = bc.signedBinaryToInt(cpu.registers[regs[0]])
     b = bc.signedBinaryToInt(cpu.registers[regs[1]])
     c = bc.signedBinaryToInt(cpu.registers[regs[2]])
-    result = a + b # Do the first arithmetic operation
-    result -= c         # Do the second arithmetic operation (Preserves lack of order-of-operations)
-    cpu.registers[regs[0]] = bc.signedIntToBinary(result) # Store the result
-    setFlags(result, False, (b < c)) # Set the flags for the rightmost operation
+    result = a + b
+    result -= c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)  # Store the result
+    setFlags(result, False, (b < c))  # Set the flags for the rightmost operation
+
 
 # All of these are exactly the same save the exceptions marked above
 def addMulRegisters(registers: str, extraRegister: str) -> None:
@@ -315,6 +340,18 @@ def addsDivRegisters(registers: str, extraRegister: str) -> None:
     result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
+
+
+def subSubRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a - b
+    result -= c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result, False, (b < c))
 
 
 def subAddRegisters(registers: str, extraRegister: str) -> None:
@@ -377,6 +414,18 @@ def subsDivRegisters(registers: str, extraRegister: str) -> None:
     setFlags(result)
 
 
+def mulMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b
+    result *= c
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
 def mulAddRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
     regs.append(rl.fourBitToRegister(extraRegister))
@@ -410,6 +459,18 @@ def mulDivRegisters(registers: str, extraRegister: str) -> None:
     result = a * b
     result = math.floor(result / c)
     cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
+def smulsMulRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = a * b
+    result *= c
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
 
 
@@ -449,6 +510,18 @@ def smulsDivRegisters(registers: str, extraRegister: str) -> None:
     setFlags(result)
 
 
+def divDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
+    a = bc.unsignedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.unsignedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.unsignedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b)
+    result = math.floor(result / c)
+    cpu.registers[regs[0]] = bc.unsignedIntToBinary(result)
+    setFlags(result)
+
+
 def divAddRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
     regs.append(rl.fourBitToRegister(extraRegister))
@@ -485,6 +558,17 @@ def divMulRegisters(registers: str, extraRegister: str) -> None:
     setFlags(result)
 
 
+def sdivsDivRegisters(registers: str, extraRegister: str) -> None:
+    regs: list[str] = rl.eightBitToRegisters(registers)
+    regs.append(rl.fourBitToRegister(extraRegister))
+    a = bc.signedBinaryToInt(cpu.registers[regs[0]])
+    b = bc.signedBinaryToInt(cpu.registers[regs[1]])
+    c = bc.signedBinaryToInt(cpu.registers[regs[2]])
+    result = math.floor(a / b)
+    result = math.floor(result / c)
+    cpu.registers[regs[0]] = bc.signedIntToBinary(result)
+    setFlags(result)
+
 def sdivAddRegisters(registers: str, extraRegister: str) -> None:
     regs: list[str] = rl.eightBitToRegisters(registers)
     regs.append(rl.fourBitToRegister(extraRegister))
@@ -519,5 +603,6 @@ def sdivsMulRegisters(registers: str, extraRegister: str) -> None:
     result *= c
     cpu.registers[regs[0]] = bc.signedIntToBinary(result)
     setFlags(result)
+
 
 ## End of instructions

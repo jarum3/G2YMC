@@ -289,6 +289,12 @@ def main():
             True,
         )
     )
+    addDict(Instruction("addadd", "96", 3, ["register-register", "register"], addAddRegisters, True, True))
+    addDict(Instruction("subsub", "97", 3, ["register-register", "register"], subSubRegisters, True, True))
+    addDict(Instruction("mulmul", "98", 3, ["register-register", "register"], mulMulRegisters, True))
+    addDict(Instruction("smulsmul", "99", 3, ["register-register", "register"], smulsMulRegisters, True))
+    addDict(Instruction("divdiv", "9A", 3, ["register-register", "register"], divDivRegisters, True))
+    addDict(Instruction("sdivsdiv", "9B", 3, ["register-register", "register"], sdivsDivRegisters, True))
 
     # Write both dictionaries to pickle files
     #! Python processes filenames in relation to current working directory, make sure that it is set to G2YMC/src/ymc for this to work
