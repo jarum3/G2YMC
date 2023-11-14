@@ -1,4 +1,5 @@
 movrl EAX, -100
 outnl
-outu EAX
+outs EAX
 outnl
+hlt

@@ -48,10 +48,10 @@ def getBinaryFromLine(line: str, instructions: dict[str, Instruction]) -> str:
                 # Increment both list pointers forward
                 arg += 1
                 linePiece += 1
-                # Append current instruction to binary string
-                for byte in binary:
-                    if byte:
-                        binaryString += byte
+        # Append current instruction to binary string
+        for byte in binary:
+            if byte:
+                binaryString += byte
     return binaryString
 
 def main():
