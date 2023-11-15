@@ -10,10 +10,7 @@ from PLine import PLine
 import helpers.compiler_extension as ce
 import helpers.compiler_functions as cf
 
-def main():
-    # Open the file in read mode
-    file_path = "path_to_your_file.txt"  # Replace with the actual path to txt file 
-
+def main(file_path):
     program_counter: int = 0
 
     line_count: int = cf.get_number_of_lines(file_path)
@@ -51,6 +48,11 @@ def main():
         print("File not found. Please check the file path.")
     except Exception as e:
         print(f"An error occurred: {e}")
+
+    # Write assembly to file
+    with open("file.ymc", "w") as file:
+        for pline in pline_list:
+            file.write(pline.YMC_string)
 
 
 if __name__ == '__main__':

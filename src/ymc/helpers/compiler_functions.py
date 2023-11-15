@@ -70,7 +70,7 @@ def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: boo
         mov_lines += "movrm ebx, " + address[1] + "\n"
         counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
 
-    # CProcess third line of ymc if necessary
+    # Process third line of ymc if necessary
     if is3args == True:
         address.append(str(variables[vars[4]]))
         if any(char.isdigit() for char in vars[4]): # literal
