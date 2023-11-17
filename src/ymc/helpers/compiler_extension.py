@@ -6,6 +6,7 @@
 #
 #######################################################################
 
+from __future__ import annotations
 import math
 from PLine import PLine
 import helpers.compiler_functions as cf
@@ -123,17 +124,21 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
 def relational(pline_instance: PLine) -> int: # if/else and while statements, start by checking what each line is
     line_text: str = pline_instance.text  # grab text from line
     line_list: list[str] = line_text.split()   # split line into list.
-    type: str = line_list[0]                                                             
-    first_operand = line_list[1]
-    sign: str = line_list[2]
-    limit = line_list[3]
+    type: str = line_list[0]      
     counter = 0
 
-    if type == "if":            # check if line is if/else statement or while loop                                                                 
+    if type == "if":            # check if line is if/else statement or while loop                               
+        first_operand = line_list[1]
+        sign: str = line_list[2]
+        limit = line_list[3]                                                               
         print("Code for if goes here") # TODO: Terry
     elif type == "else":                                                                 
         print("Code for else goes here") # TODO: Terry 
     elif type == "While":
+
+        first_operand = line_list[1]
+        sign: str = line_list[2]
+        limit = line_list[3]
 
         if str(first_operand) in variables:      # check if first operand is a variable
             pline_instance.append_YMC("movrm ecx, " + variables[first_operand])     # ADD YMC Instruction

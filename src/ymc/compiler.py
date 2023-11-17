@@ -36,8 +36,8 @@ def main(file_path):
                 if pline_instance.text.startswith('   '):
                     cf.set_parent(pline_instance, pline_list, i)
                     next_line = next(file)
-                    if (next_line.strip().isspace() or not next_line.startswith('   ')): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
-                        pline_instance.set_end_block()
+                    if (next_line.strip().isspace() or not next_line.startswith('   ')) and (pline_instance.parent.text is not "Else"): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
+                        program_counter += 3 # Always adds a jump of 3 bytes after the final child UNLESS it's at the end of an else statement
 
                 i += 1
 
@@ -49,7 +49,6 @@ def main(file_path):
 
             # Add jump locations to if, else, and while sections of pline_list
             pline_list = cf.add_jumps(pline_list)
-    
     except FileNotFoundError:
         print("File not found. Please check the file path.")
     except Exception as e:
