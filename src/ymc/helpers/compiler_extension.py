@@ -23,11 +23,11 @@ def declaration(pline_instance: PLine) -> int: # start by checking if signed or 
     line_text: str = pline_instance.text # grab text from line instance
     vars: list[str] = line_text.split()  # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
-    # I deleted if statement for signed or unsigned since it is only calculated during arithmetic/compare
-    for v in vars:
-            dec_count = len(variables) + 1                 # set declaration count to length of variables (0) + 1 = 1
+    
+    for v in vars:              # for variables being declared in vars
+            dec_count = len(variables) + 1        # set declaration count to length of variables (0) + 1 = 1
             variables[v] = 1024 - dec_count       # set variables[v] equal to length of memory - declaration count
-    return 0                        # EX: "Unsigned a b c" would have v = "a", len(memory) = 1024, len(variables) = 0, dec_count = 1, variables["x"] = 1024 - 1. Repeat for b and c.
+    return 0                     # counter shouldn't go up yet, return 0
 
 ##########################
 # Arithmetic operations and Assignments
@@ -123,37 +123,57 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
 def relational(pline_instance: PLine) -> int: # if/else and while statements, start by checking what each line is
     line_text: str = pline_instance.text  # grab text from line
     line_list: list[str] = line_text.split()   # split line into list.
-    type: str = line_list[0] 
+    type: str = line_list[0]                                                             
+    first_operand = line_list[1]
+    sign: str = line_list[2]
+    limit = line_list[3]
+    counter = 0
+
     if type == "if":            # check if line is if/else statement or while loop                                                                 
         print("Code for if goes here") # TODO: Terry
     elif type == "else":                                                                 
         print("Code for else goes here") # TODO: Terry 
-    elif type == "While":                                                                 
-        variable = line_list[1]
-        sign = line_list[2]
-        limit = line_list[3]
-        # TODO: Determine how to find location of jump and 
-        if sign == '=':                                      
-            print("Code for equal loop goes here")
-        elif sign == '!=':                                                                 
-            print("Code for not equal loop goes here")
-        elif sign == '<':                                                                 
-            print("Code for less than loop goes here")
-        elif sign == '<=':                                                                 
-            print("Code for less than or equal loop goes here")
-        elif sign == '>':                                                                
-            print("Code for greater than loop goes here")
-        elif sign == '>=':                                                                 
-            print("Code for greater than or equal loop goes here")
-    # TODO: If/Else - Terry
-    # TODO: While - Brad
-    # Both of our parts should first be split up into 3 if/elif statements and one else statement checking for what kind of statement it is; 
+    elif type == "While":
+
+        if str(first_operand) in variables:      # check if first operand is a variable
+            pline_instance.append_YMC("movrm ecx, " + variables[first_operand])     # ADD YMC Instruction
+            counter += 4            # ADD 4 bytes for movrm
+        else:
+            pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
+            counter += 3            # ADD 3 bytes for movrl
+
+        if str(limit) in variables:      # check if second operand is a variable
+            pline_instance.append_YMC("movrm ecx, " + variables[limit])     # ADD YMC Instruction
+            counter += 4            # ADD 4 bytes for movrm
+        else:
+            pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
+            counter += 3            # ADD 3 bytes for movrl
+
+        pline_instance.append_YMC("cmprr eax, ecx")
+        counter += 2            # ADD 2 bytes for cmprr
+        pline_instance.set_register("EAX")  # set registers EAX and ECX
+        pline_instance.set_register("ECX")
+
+        if sign == '=':
+            pline_instance.append_YMC("jne")
+        elif sign == '!=':                             
+            pline_instance.append_YMC("je")
+        elif sign == '<':                              
+            pline_instance.append_YMC("jge")
+        elif sign == '<=':                                     
+            pline_instance.append_YMC("jg")
+        elif sign == '>':                                   
+            pline_instance.append_YMC("jle")
+        elif sign == '>=':                                         
+            pline_instance.append_YMC("jl")
+        
+        counter += 3 # ADD 3 bytes to counter for jump
+
+    return counter
 
 ####################################
 # Print
 # Brad K
-# TODO: Convert -[hex value] to [hex signed] EX: 0x7F = 127 AND 0x80 = -128
-#                   In other words, change str(hex(arg_value)) to a function I'll create in compiler functions to return correct signed hex
 ####################################
 
 def printD(pline_instance: PLine) -> int:          # print statements

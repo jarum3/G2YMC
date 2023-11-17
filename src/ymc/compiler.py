@@ -13,7 +13,7 @@ import helpers.compiler_functions as cf
 def main(file_path):
     program_counter: int = 0
 
-    line_count: int = cf.get_number_of_lines(file_path)
+    line_count: int = cf.get_number_of_lines(file_path) + 1  # Added 1 so that we can include the HLT instruction at the end
     default_value1: PLine
     # Creation of line list, i.e. list that contains a PLine object for every line in the file
     pline_list: list[PLine] = [default_value1] * line_count
@@ -43,7 +43,13 @@ def main(file_path):
 
                 # this line will execute the corresponding function based on the line type
                 program_counter += ce.switch_dict.get(pline_instance.type, ce.default_case)(pline_instance)
+                
+            pline_list[line_count] = cf.create_hlt("[End of Code]", program_counter, "hlt") # create hlt PLine Instance at end of the PLine list
+            program_counter += 1                                                            # add 1 byte for HLT instruction
 
+            # Add jump locations to if, else, and while sections of pline_list
+            pline_list = cf.add_jumps(pline_list)
+    
     except FileNotFoundError:
         print("File not found. Please check the file path.")
     except Exception as e:
