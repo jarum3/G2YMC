@@ -135,7 +135,8 @@ def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
         else:
             operation_line += "div eax, ebx, ecx\n"
 
-    return operation_line    return operation_line
+    return operation_line
+
 def create_hlt(hlc_text:str, address: int, YMC_Str: str):
     pline_hlt = PLine(hlc_text)         # text = "[End of Code]"
     pline_hlt.set_YMC(YMC_Str)          # set YMC_String to "hlt"
