@@ -1,4 +1,6 @@
 from __future__ import annotations
+from contextlib import redirect_stdout
+import io
 import pickle
 from instructions.Instruction import Instruction
 import instructions.YMCCPU as cpu
@@ -33,12 +35,15 @@ def decode(instructions: dict[str, Instruction], instructionPointer: int) -> tup
   return (instruction, args) # Return a tuple of the instruction and the list of arguments
 
 ## Execute an instruction's function with the arguments passed
-def execute(instruction: Instruction, args: list[str]):
+def execute(instruction: Instruction, args: list[str]) -> str | None:
   cpu.instructionPointer += instruction.width # Increment instruction pointer BEFORE function, in case function is a jump
-  if len(args) > 0: # If we have args, use them
-    instruction.function(*args) # Args get unrolled into function arguments (Look up the spread operator for info on this)
-  else:
-    instruction.function() # Execute with no arguments
+  with redirect_stdout(io.StringIO()) as output:
+    if len(args) > 0: # If we have args, use them
+      instruction.function(*args) # Args get unrolled into function arguments (Look up the spread operator for info on this)
+    else:
+      instruction.function() # Execute with no arguments
+    if output.getvalue():
+      return output.getvalue()
 
 def main():
     # Should use files asm.pkl to convert from assembly code to binary
