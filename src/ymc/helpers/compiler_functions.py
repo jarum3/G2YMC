@@ -52,7 +52,7 @@ def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
         args[2] = variables[vars[4]]
     return args
 
-def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool):
+def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool) -> tuple[str, int]:
     mov_lines: str
     counter: int = 0
     address: list[str] = [str(variables[vars[0]]), str(variables[vars[2]])] # This is one of the ugliest things I have ever seen.
@@ -138,7 +138,7 @@ def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
 
     return operation_line
 
-def create_hlt(hlc_text:str, address: int, YMC_Str: str):
+def create_hlt(hlc_text:str, address: int, YMC_Str: str) -> PLine:
     pline_hlt = PLine(hlc_text)         # text = "[End of Code]"
     pline_hlt.set_YMC(YMC_Str)          # set YMC_String to "hlt"
     pline_hlt.set_address(address)  # set address in PLine instance to final ce.program_counter value
