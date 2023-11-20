@@ -146,22 +146,22 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
 
 def add_jumps(pline_list: list[PLine]) -> list[PLine]:
     pline_list_modified: list[PLine] = pline_list
-    pi: int = 0 # Used to save index of parent for the incoming if statement
+
     for p in pline_list_modified: # For PLine in pline_list
         pl_addr: int = p.address  # store address of PLine in list
-        c_index = 0     # store index of previous child (relevant to parent)
+        last_child: PLine
 
         if p.text.startswith("while"):  # check if pline is a While loop
-            for tp in pline_list[pi:]: # tp = trailing pLine from p_index onward
+            for tp in pline_list[pl_addr + 1]: # tp = trailing pLine from p_index onward
                 if hasattr(tp, 'parent') == False: # Find first PLine where there isn't a parent attribute (Not a child)
-                    pline_list[pi].add_jump_loc(tp.address) # add location outside of loop to the jmp instruction
-                    lc_index: int = (pi + c_index) # set last child index to pi index + child index (relative to parent)
-                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+                    last_child.add_jump_loc(tp.address) # add location outside of loop to the jmp instruction
+                    last_child.append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
                     break           # break loop once you reach a non-child PLine
-                c_index += 1 # increase child index by 1
+                last_child = tp
+
         elif p.text.startswith("if"):  # check if pline is a While loop
             print("Code for adding if jumps")
         elif p.text.startswith("else"):  # check if pline is a While loop
             print("Code for adding if jumps")
-        pi += 1    # increase parent index by one 
+
     return pline_list_modified  
