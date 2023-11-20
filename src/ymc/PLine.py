@@ -46,7 +46,7 @@ class PLine:
         self.YMC_string = ymc
 
     def append_YMC(self, ymc: str): # this is how we will store the YMC string
-        self.YMC_string += "\n" + ymc
+        self.YMC_string += ymc +"\n"
 
     def add_jump_loc(self, address: int): # this is used when adding locations to jumps.
         self.YMC_string += " " + str(address)

@@ -24,7 +24,6 @@ def declaration(pline_instance: PLine) -> int: # start by checking if signed or 
     line_text: str = pline_instance.text # grab text from line instance
     vars: list[str] = line_text.split()  # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
-    
     for v in vars:              # for variables being declared in vars
             dec_count = len(variables) + 1        # set declaration count to length of variables (0) + 1 = 1
             variables[v] = 1024 - dec_count       # set variables[v] equal to length of memory - declaration count
@@ -193,23 +192,23 @@ def printD(pline_instance: PLine) -> int:          # print statements
         arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
 
     if arg == "\n":                # check if new line
-        pline_instance.set_YMC("outnl") 
+        pline_instance.set_YMC("outnl" + "\n") 
         counter += 1                 # Increase program counter by 1 (outnl [1 byte])
         return
     elif arg in unsigned:           # else if arg is an unsigned variable
-        pline_instance.set_YMC("movrm eax, " + arg_location)   # set YMC instruction to first move arg_location to register eax, then outs eax 
+        pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
         pline_instance.append_YMC("outs eax")
         counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
     elif arg in signed:           # else if arg is a signed variable
-        pline_instance.set_YMC("movrm eax, " + arg_location) # same as unsigned but with 'outu eax'
+        pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
         pline_instance.append_YMC("outu eax")
         counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
     elif arg[0] is '-':           # check if literal is negative
-        pline_instance.set_YMC("movrl eax, " + arg)      # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg + "\n")      # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
     else:                       # else it is positive
-        pline_instance.set_YMC("movrl eax, " + arg)       # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg + "\n")       # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
 
