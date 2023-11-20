@@ -140,14 +140,14 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         limit = line_list[3]
 
         if str(first_operand) in variables:      # check if first operand is a variable
-            pline_instance.append_YMC("movrm ecx, " + variables[first_operand])     # ADD YMC Instruction
+            pline_instance.append_YMC("movrm ecx, " + str(variables[first_operand]))     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
         else:
             pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
             counter += 3            # ADD 3 bytes for movrl
 
         if str(limit) in variables:      # check if second operand is a variable
-            pline_instance.append_YMC("movrm ecx, " + variables[limit])     # ADD YMC Instruction
+            pline_instance.append_YMC("movrm ecx, " + str(variables[limit]))     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
         else:
             pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
@@ -188,21 +188,20 @@ def printD(pline_instance: PLine) -> int:          # print statements
     signed: list[str] = ["x","y","z"]
     counter: int = 0
 
-    if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
-        arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
-
     if arg == "\n":                # check if new line
         pline_instance.set_YMC("outnl" + "\n") 
         counter += 1                 # Increase program counter by 1 (outnl [1 byte])
-        return
-    elif arg in unsigned:           # else if arg is an unsigned variable
-        pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
-        pline_instance.append_YMC("outs eax")
-        counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
-    elif arg in signed:           # else if arg is a signed variable
-        pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
-        pline_instance.append_YMC("outu eax")
-        counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
+        return counter
+    if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
+        arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
+        if arg in unsigned:           # else if arg is an unsigned variable
+            pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
+            pline_instance.append_YMC("outs eax")
+            counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
+        elif arg in signed:           # else if arg is a signed variable
+            pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
+            pline_instance.append_YMC("outu eax")
+            counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
     elif arg[0] is '-':           # check if literal is negative
         pline_instance.set_YMC("movrl eax, " + arg + "\n")      # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
