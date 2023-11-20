@@ -3,6 +3,7 @@
 # then adds them to two dictionaries, and saves those dictionaries
 # to two pickle files to be used later
 ########################
+from __future__ import annotations
 from instructions.Instruction import Instruction
 from instructions.asmFunctions import *
 import pickle

@@ -3,6 +3,7 @@
 # then encodes it into a binary string
 # and writes that string to file.bin 
 ##########################################
+from __future__ import annotations
 import pickle
 from instructions.Instruction import Instruction
 import helpers.binaryConversion as bc

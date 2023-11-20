@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pickle
 from instructions.Instruction import Instruction
 import instructions.YMCCPU as cpu
