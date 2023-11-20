@@ -14,7 +14,7 @@ def main(file_path):
     program_counter: int = 0
 
     line_count: int = cf.get_number_of_lines(file_path) + 1  # Added 1 so that we can include the HLT instruction at the end
-    default_value1: PLine
+    default_value1: PLine = PLine("")
     # Creation of line list, i.e. list that contains a PLine object for every line in the file
     pline_list: list[PLine] = [default_value1] * line_count
 
@@ -62,4 +62,4 @@ def main(file_path):
 
 
 if __name__ == '__main__':
-    main()
+    main("file.hlc")
