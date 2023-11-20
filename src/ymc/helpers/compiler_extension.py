@@ -211,8 +211,8 @@ def printD(pline_instance: PLine) -> int:          # print statements
 
     # If the line is the last line in a if/else or while block, we then need to refer back a relational function
     # Start by checking if parent is if, else, or while, then check the relational operator and do appropriate jumps and compares
-    if pline_instance.is_end_block: 
-        print('refer to end relational function')
+    # if pline_instance.is_end_block: 
+    #     print('refer to end relational function')
 
     return counter
 
