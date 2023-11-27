@@ -83,7 +83,7 @@ def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: boo
     return mov_lines, counter
 
 def ymc_operation_2args(operator: str, isSigned: bool) -> str:
-    operation_line: str
+    operation_line: str = ""
     # Parse operators and process third line of ymc
     if operator == "+":
         operation_line = "add eax, ebx\n"
@@ -103,7 +103,7 @@ def ymc_operation_2args(operator: str, isSigned: bool) -> str:
     return operation_line
 
 def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
-    operation_line: str
+    operation_line: str = ""
     # Handle first operation.
     if operators[0] == "+":
         operation_line = "add"
@@ -121,19 +121,21 @@ def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
             operation_line = "div"
     # Handle second operation. Result of first op is stored in destination variable, so the operation is done on the variable and the third argument
     if operators[1] == "+":
-        operation_line += "add eax, ebx, ecx\n"
+        operation_line += "add"
     elif operators[1] == "-":
-        operation_line += "sub eax, ebx, ecx\n"
+        operation_line += "sub"
     elif operators[1] == "*":
         if isSigned == True:
-            operation_line += "smul eax, ebx, ecx\n"
+            operation_line += "smul"
         else:
-            operation_line += "mul eax, ebx, ecx\n"
+            operation_line += "mul"
     elif operators[1] == "/":
         if isSigned == True:
-            operation_line += "sdiv eax, ebx, ecx\n"
+            operation_line += "sdiv"
         else:
-            operation_line += "div eax, ebx, ecx\n"
+            operation_line += "div"
+    if operation_line:
+        operation_line += " eax, ebx, ecx\n"
 
     return operation_line
 
