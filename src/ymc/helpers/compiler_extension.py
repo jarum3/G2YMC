@@ -6,7 +6,6 @@
 #
 #######################################################################
 
-from __future__ import annotations
 import math
 from PLine import PLine
 import helpers.compiler_functions as cf
@@ -24,6 +23,7 @@ def declaration(pline_instance: PLine) -> int: # start by checking if signed or 
     line_text: str = pline_instance.text # grab text from line instance
     vars: list[str] = line_text.split()  # split words in str into list. Im not sure if there's going to be HLC with less than 3 variables
     del vars[0]                # delete signed/unsigned word from variables list. EX:del vars[0]="signed" --> vars[0]="a"  
+    
     for v in vars:              # for variables being declared in vars
             dec_count = len(variables) + 1        # set declaration count to length of variables (0) + 1 = 1
             variables[v] = 1024 - dec_count       # set variables[v] equal to length of memory - declaration count
@@ -112,37 +112,47 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
         pline_instance.set_register("EBX")
         pline_instance.set_register("ECX")
         pline_instance.set_YMC(temp_ymc)
+    
+    # If the line is the last line in a if/else or while block, we then need to refer back a relational function
+    # Start by checking if parent is if, else, or while, then check the relational operator and do appropriate jumps and compares
+    if pline_instance.is_end_block: 
+        print('refer to end relational function')
 
     return counter
 
 def relational(pline_instance: PLine) -> int: # if/else and while statements, start by checking what each line is
     line_text: str = pline_instance.text  # grab text from line
     line_list: list[str] = line_text.split()   # split line into list.
-    type: str = line_list[0]      
+    type: str = line_list[0]                                                             
+    first_operand = line_list[1]
+    sign: str = line_list[2]
+    limit = line_list[3]
     counter = 0
-
-    if type == "if":            # check if line is if/else statement or while loop                               
-        first_operand = line_list[1]
-        sign: str = line_list[2]
-        limit = line_list[3]                                                               
-        print("Code for if goes here") # TODO: Terry
-    elif type == "else":                                                                 
-        print("Code for else goes here") # TODO: Terry 
+    right_operand = line_list[1]
+    left_operand = line_list[1]
+    if type == "if":            # check if line is if/else statement or while loop                                                                 
+        pline_instance.append_YMC("movrm ecx, " + variables[right_operand])
+        counter += 4
+        pline_instance.append_YMC("movrl eax," + variables[left_operand])
+        counter += 3
+    
+    elif type == "else":  
+        pline_instance.append_YMC("cmprr eax, ecx")
+        counter += 2            # ADD 2 bytes for cmprr                                                               
+        pline_instance.set_register("EAX")  # set registers EAX and ECX
+        pline_instance.set_register("ECX")
+        
     elif type == "While":
 
-        first_operand = line_list[1]
-        sign: str = line_list[2]
-        limit = line_list[3]
-
         if str(first_operand) in variables:      # check if first operand is a variable
-            pline_instance.append_YMC("movrm ecx, " + str(variables[first_operand]))     # ADD YMC Instruction
+            pline_instance.append_YMC("movrm ecx, " + variables[first_operand])     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
         else:
             pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
             counter += 3            # ADD 3 bytes for movrl
 
         if str(limit) in variables:      # check if second operand is a variable
-            pline_instance.append_YMC("movrm ecx, " + str(variables[limit]))     # ADD YMC Instruction
+            pline_instance.append_YMC("movrm ecx, " + variables[limit])     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
         else:
             pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
@@ -183,26 +193,27 @@ def printD(pline_instance: PLine) -> int:          # print statements
     signed: list[str] = ["x","y","z"]
     counter: int = 0
 
-    if arg == "\n":                # check if new line
-        pline_instance.set_YMC("outnl" + "\n") 
-        counter += 1                 # Increase program counter by 1 (outnl [1 byte])
-        return counter
     if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
         arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
-        if arg in unsigned:           # else if arg is an unsigned variable
-            pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
-            pline_instance.append_YMC("outs eax")
-            counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
-        elif arg in signed:           # else if arg is a signed variable
-            pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
-            pline_instance.append_YMC("outu eax")
-            counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
+
+    if arg == "\n":                # check if new line
+        pline_instance.set_YMC("outnl") 
+        counter += 1                 # Increase program counter by 1 (outnl [1 byte])
+        return
+    elif arg in unsigned:           # else if arg is an unsigned variable
+        pline_instance.set_YMC("movrm eax, " + arg_location)   # set YMC instruction to first move arg_location to register eax, then outs eax 
+        pline_instance.append_YMC("outs eax")
+        counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
+    elif arg in signed:           # else if arg is a signed variable
+        pline_instance.set_YMC("movrm eax, " + arg_location) # same as unsigned but with 'outu eax'
+        pline_instance.append_YMC("outu eax")
+        counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
     elif arg[0] is '-':           # check if literal is negative
-        pline_instance.set_YMC("movrl eax, " + arg + "\n")      # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg)      # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
     else:                       # else it is positive
-        pline_instance.set_YMC("movrl eax, " + arg + "\n")       # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg)       # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
 
@@ -211,8 +222,8 @@ def printD(pline_instance: PLine) -> int:          # print statements
 
     # If the line is the last line in a if/else or while block, we then need to refer back a relational function
     # Start by checking if parent is if, else, or while, then check the relational operator and do appropriate jumps and compares
-    # if pline_instance.is_end_block: 
-    #     print('refer to end relational function')
+    if pline_instance.is_end_block: 
+        print('refer to end relational function')
 
     return counter
 
