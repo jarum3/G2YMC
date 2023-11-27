@@ -208,7 +208,7 @@ def printD(pline_instance: PLine) -> int:          # print statements
             pline_instance.set_YMC("movrm eax, " + arg_location) # same as unsigned but with 'outu eax'
             pline_instance.append_YMC("outu eax")
             counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
-    elif arg[0] is '-':           # check if literal is negative
+    elif arg[0].startswith('-'):           # check if literal is negative
         pline_instance.set_YMC("movrl eax, " + arg)      # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
