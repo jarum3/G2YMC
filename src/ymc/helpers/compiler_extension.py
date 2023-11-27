@@ -142,7 +142,7 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         pline_instance.set_register("EAX")  # set registers EAX and ECX
         pline_instance.set_register("ECX")
         
-    elif type == "While":
+    elif type == "while":
 
         if str(first_operand) in variables:      # check if first operand is a variable
             pline_instance.append_YMC("movrm ecx, " + variables[first_operand])     # ADD YMC Instruction

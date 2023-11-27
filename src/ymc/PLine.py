@@ -11,8 +11,8 @@
 class PLine:
     def __init__(self, text):
         self.text: str = text
-        self.YMC_string: str = " " # this will be updated by our switch statement
-        self.assembly_string: str = " "
+        self.YMC_string: str = "" # this will be updated by our switch statement
+        self.assembly_string: str = ""
         self.registers: dict[str, bool] = {"EDX": False, "ECX": False, "EBX": False, "EAX": False}
         arithmetic: list[str] = ["=", "+", "-", "*", "/"]
 
