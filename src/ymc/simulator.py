@@ -53,6 +53,8 @@ def main():
     loadFile("file.bin") # Load in the binary file
     while (True): # Loop until we find a halt
       (instruction, args) = decode(instructions, cpu.instructionPointer) # Decode instruction
-      execute(instruction, args) # Execute instruction
+      output = execute(instruction, args) # Execute instruction
+      if output:
+        print(output, end="")
 if __name__ == "__main__":
   main()

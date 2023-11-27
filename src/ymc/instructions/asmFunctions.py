@@ -16,17 +16,16 @@ import math  # For rounding from division
 
 # print the signed representation of the CPU register pointed to by the register byte
 def outputSigned(register: str) -> None:
-    print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
-
+    print(bc.signedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]), end="")
 
 # print the unsigned representation of the CPU register pointed to by the register byte
 def outputUnsigned(register: str) -> None:
-    print(bc.unsignedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]))
+    print(bc.unsignedBinaryToInt(cpu.registers[rl.fourBitToRegister(register)]), end="")
 
 
 # print a newline, empty body accomplishes this
 def outputNewline() -> None:
-    print("")
+    print("\n", end="")
 
 
 ## Mov instructions

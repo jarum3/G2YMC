@@ -1,21 +1,17 @@
-unsigned a b c
-signed x y z
+unsigned a b
+signed x y
 
-a = 3
-b = 15 + a
-c = b * a / 10
+a = 10
+b = 2
+x = -10
+y = 1
 
-x = -5
-y = 13
-
-if c <= 10
-  x = y + 10
-else
-  x = y - 20
-
-while y > 0
-  print y
-  print \n
+while x < 0
   print x
   print \n
-  y = y - 1
+  x = x + y
+
+while a > 0
+  print a
+  print \n
+  a = a - b
