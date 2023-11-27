@@ -175,8 +175,7 @@ def add_jumps(pline_list: list[PLine]) -> list[PLine]:
                 if hasattr(tp, 'child') == True:
                     pline_list[pi].add_jump_loc(tp.address)
                     lc_index: int = (pi + c_index)
-                    # TODO: hlc not defined here, don't know about halting in this context
-                    pline_list[lc_index].append_YMC("halt" + str(hlc))
+                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))
             break
         pi += 1    # increase parent index by one 
     return pline_list_modified  
