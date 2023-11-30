@@ -54,30 +54,28 @@ def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
 def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool):
     mov_lines: str
     counter: int = 0
-    address: list[str] = [str(variables[vars[0]]), str(variables[vars[2]])] # This is one of the ugliest things I have ever seen.
     # Process first line of ymc
     if any(char.isdigit() for char in vars[0]): # literal
         mov_lines = "movrl eax, " + vars[0] + "\n"
         counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
     else: # variable
-        mov_lines = "movrm eax, " + address[0] + "\n"
+        mov_lines = "movrm eax, " + str(variables[vars[0]]) + "\n"
         counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
     # Process second line of ymc
     if any(char.isdigit() for char in vars[2]): # literal
         mov_lines += "movrl ebx, " + vars[2] + "\n"
         counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
     else: # variable
-        mov_lines += "movrm ebx, " + address[1] + "\n"
+        mov_lines += "movrm ebx, " + str(variables[vars[2]]) + "\n"
         counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
 
     # Process third line of ymc if necessary
     if is3args == True:
-        address.append(str(variables[vars[4]]))
         if any(char.isdigit() for char in vars[4]): # literal
             mov_lines += "movrl ecx, " + vars[4] + "\n"
             counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
         else: # variable
-            mov_lines += "movrm ecx, " + address[2] + "\n"
+            mov_lines += "movrm ecx, " + str(variables[vars[4]]) + "\n"
             counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
     
     return mov_lines, counter
@@ -102,7 +100,7 @@ def ymc_operation_2args(operator: str, isSigned: bool) -> str:
     
     return operation_line
 
-def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
+def ymc_operation_3args(operators: list[str], first_op_isSigned: bool, second_op_isSigned: bool) -> str:
     operation_line: str = ""
     # Handle first operation.
     if operators[0] == "+":
@@ -110,12 +108,12 @@ def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
     elif operators[0] == "-":
         operation_line = "sub"
     elif operators[0] == "*":
-        if isSigned == True:
+        if first_op_isSigned == True:
             operation_line = "smul"
         else:
             operation_line = "mul"
     elif operators[0] == "/":
-        if isSigned == True:
+        if first_op_isSigned == True:
             operation_line = "sdiv"
         else:
             operation_line = "div"
@@ -125,12 +123,12 @@ def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
     elif operators[1] == "-":
         operation_line += "sub"
     elif operators[1] == "*":
-        if isSigned == True:
+        if second_op_isSigned == True:
             operation_line += "smul"
         else:
             operation_line += "mul"
     elif operators[1] == "/":
-        if isSigned == True:
+        if second_op_isSigned == True:
             operation_line += "sdiv"
         else:
             operation_line += "div"

@@ -27,6 +27,7 @@ def declaration(pline_instance: PLine) -> int: # start by checking if signed or 
     for v in vars:              # for variables being declared in vars
             dec_count = len(variables) + 1        # set declaration count to length of variables (0) + 1 = 1
             variables[v] = 1024 - dec_count       # set variables[v] equal to length of memory - declaration count
+    print("Declaration line processed") 
     return 0                     # counter shouldn't go up yet, return 0
 
 ##########################
@@ -43,15 +44,15 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
     del vars[0]     # delete the = sign
 
     temp_ymc: str
-    isSigned: bool = False
 
     # Handle assignments here
     if len(vars) == 1: # this means that this is just an assingment operation with no arithmetic
-        address: str = str(variables[vars[0]])
+        
         if any(char.isdigit() for char in vars[0]): # literal
             temp_ymc = "movrl eax, " + vars[0] + "\n" 
             counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
         else:
+            address: str = str(variables[vars[0]])
             temp_ymc = "movrm eax, " + address + "\n"
             counter += 4 # movrm is 4 bytes, so we increment the program_counter by 4
         
@@ -66,8 +67,11 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
     elif len(vars) == 3: # this means it is a 2-arg operation, var[0] = arg1, var[1] = operator, var[2] = arg2
         arguments: list[int] = cf.set2args(vars, variables)
         operator: str = vars[1]
-        if arguments[0] or arguments[1] < 0:
+        isSigned: bool
+        if arguments[0] < 0 or arguments[1] < 0:
                 isSigned = True
+        else:
+            isSigned = False
 
         temp_counter: int
         # Process first 2 lines of ymc
@@ -91,8 +95,16 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
     elif len(vars) == 5: # this means it is 3-arg operation
         arguments: list[int] = cf.set3args(vars, variables)
         operators: list[str] = [vars[1], vars[3]]
-        if arguments[0] or arguments[1] or arguments[2] < 0:
-                isSigned = True
+        first_op_isSigned: bool
+        second_op_isSigned: bool
+        if arguments[0] < 0 or arguments[1] < 0:
+                first_op_isSigned = True
+        else:
+            first_op_isSigned = False
+        if arguments[2] < 0:
+            second_op_isSigned = True
+        else:
+            second_op_isSigned = False
 
         temp_counter: int = 0
         # Process first 3 lines of ymc
@@ -100,7 +112,7 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
         counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
 
         # Parse operators and process fourth line of ymc
-        temp_ymc += cf.ymc_operation_3args(operators, isSigned)
+        temp_ymc += cf.ymc_operation_3args(operators, first_op_isSigned, second_op_isSigned)
         counter += 3 # All 3 arg arithmetic operations are 3 bytes
 
         # Process fifth and final line of ymc
@@ -113,11 +125,7 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
         pline_instance.set_register("ECX")
         pline_instance.set_YMC(temp_ymc)
     
-    # If the line is the last line in a if/else or while block, we then need to refer back a relational function
-    # Start by checking if parent is if, else, or while, then check the relational operator and do appropriate jumps and compares
-    if pline_instance.is_end_block: # TODO: is_end_block not part of pline anymore
-        print('refer to end relational function')
-
+    print("Arithmetic line processed") 
     return counter
 
 def relational(pline_instance: PLine) -> int: # if/else and while statements, start by checking what each line is
@@ -145,10 +153,10 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
     elif type == "while":
 
         if str(first_operand) in variables:      # check if first operand is a variable
-            pline_instance.append_YMC("movrm ecx, " + str(variables[first_operand]))     # ADD YMC Instruction
+            pline_instance.append_YMC("movrm eax, " + str(variables[first_operand]))     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
         else:
-            pline_instance.append_YMC("movrl ecx, " + limit)     # ADD YMC Instruction
+            pline_instance.append_YMC("movrl eax, " + limit)     # ADD YMC Instruction
             counter += 3            # ADD 3 bytes for movrl
 
         if str(limit) in variables:      # check if second operand is a variable
@@ -178,6 +186,7 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         
         counter += 3 # ADD 3 bytes to counter for jump
 
+    print("Relational line processed") 
     return counter
 
 ####################################
@@ -195,40 +204,36 @@ def printD(pline_instance: PLine) -> int:          # print statements
 
 
     if arg == "\n":                # check if new line
-        pline_instance.set_YMC("outnl") 
+        pline_instance.set_YMC("outnl\n") 
         counter += 1                 # Increase program counter by 1 (outnl [1 byte])
         return counter
     if arg in variables:            # Check if arg is in variables (It won't be if it's literal)
         arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
         if arg in unsigned:           # else if arg is an unsigned variable
-            pline_instance.set_YMC("movrm eax, " + arg_location)   # set YMC instruction to first move arg_location to register eax, then outs eax 
+            pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
             pline_instance.append_YMC("outs eax")
             counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
         elif arg in signed:           # else if arg is a signed variable
-            pline_instance.set_YMC("movrm eax, " + arg_location) # same as unsigned but with 'outu eax'
+            pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
             pline_instance.append_YMC("outu eax")
             counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
     elif arg.startswith('-'):           # check if literal is negative
-        pline_instance.set_YMC("movrl eax, " + arg)      # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg + "\n")      # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outs eax")                   # append YMC instruction to outs eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
     else:                       # else it is positive
-        pline_instance.set_YMC("movrl eax, " + arg)       # set YMC instruction to move literal arg to register eax
+        pline_instance.set_YMC("movrl eax, " + arg + "\n")       # set YMC instruction to move literal arg to register eax
         pline_instance.append_YMC("outu eax")                   # append YMC instruction to outu eax
         counter += 5       # Increase program counter by 3 bytes (movrl) + 2 bytes (outu)
 
     # Set modified registers
     pline_instance.set_register("EAX")
 
-    # If the line is the last line in a if/else or while block, we then need to refer back a relational function
-    # Start by checking if parent is if, else, or while, then check the relational operator and do appropriate jumps and compares
-    if pline_instance.is_end_block: # TODO: is_end_block not part of pline anymore
-        print('refer to end relational function')
-
+    print("Print line processed") 
     return counter
 
 def default_case(pline_instance: PLine) -> int:
-    print("This is the default case. Something went very wrong")  
+    print("Default case processed. Something went very wrong")  
     return 0 
 
 # Switch dictionary to call functions

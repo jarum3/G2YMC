@@ -9,57 +9,62 @@
 from PLine import PLine
 import helpers.compiler_extension as ce
 import helpers.compiler_functions as cf
+from pathlib import Path
 
 def main(file_path):
     program_counter: int = 0
-
-    line_count: int = cf.get_number_of_lines(file_path) 
-    default_value1: PLine = PLine("")
-    # Creation of line list, i.e. list that contains a PLine object for every line in the file
-    pline_list: list[PLine] = [default_value1] * line_count
-
+    pline_list: list[PLine] = []
     i: int = 0
-    try:
-        with open(file_path, 'r') as file: # the r here means read only mode
-            # Iterate over each line in the file
-            for line in file: # Process each line here
-                if line.strip().isspace(): # skip the line if it is empty
-                    continue
 
-                # Create a line object. It will set a flag telling us what category it belongs to (print, declaration, arithmetic operation, while or if)
-                pline_instance = PLine(line) 
-                pline_list[i] = pline_instance
+    with open(file_path, 'r') as file:
+        # Iterate over each line in the file
+        for line_number, line in enumerate(file, start=0): # Process each line here
+            if len(line.strip()) == 0: # skip the line if it is empty
+                continue
 
-                pline_instance.set_address(program_counter)  # Set the address of the first YMC instruction associated with the pline
+            # Create a line object. It will set a flag telling us what category it belongs to (print, declaration, arithmetic operation, while or if)
+            pline_instance = PLine(text = line) 
+ 
+            if not pline_list:
+                pline_list = [pline_instance]
+            else:
+                pline_list.append(pline_instance)
+
+            pline_instance.set_address(program_counter)  # Set the address of the first YMC instruction associated with the pline
+            pline_instance.set_type()
                 
-                # Setting the parent of the each line instance
-                if pline_instance.text.startswith('   '):
-                    cf.set_parent(pline_instance, pline_list, i)
+            # Setting the parent of the each line instance
+            if pline_instance.text.startswith('   '):
+                cf.set_parent(pline_instance, pline_list, i)
+                is_last_line = line_number == cf.get_number_of_lines(file_path) - 1
+                if not is_last_line:
                     next_line = next(file)
-                    if (next_line.strip().isspace() or not next_line.startswith('   ')) and (not pline_instance.parent.text.startswith("else")): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
+                    if (next_line.strip().isspace() or not next_line.startswith('   ')) and (not pline_instance.parent.text.startswith("Else")): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
                         program_counter += 3 # Always adds a jump of 3 bytes after the final child UNLESS it's at the end of an else statement
+                else:
+                    program_counter += 3
 
-                i += 1
+            i += 1
 
-                # this line will execute the corresponding function based on the line type
-                program_counter += ce.switch_dict.get(pline_instance.type, ce.default_case)(pline_instance)
+            # this line will execute the corresponding function based on the line type
+            program_counter += ce.switch_dict.get(pline_instance.type, ce.default_case)(pline_instance)
                 
-            pline_list.append(cf.create_hlt("[End of Code]", program_counter, "hlt")) # create hlt PLine Instance at end of the PLine list
-            program_counter += 1                                                            # add 1 byte for HLT instruction
+        pline_list.append(cf.create_hlt("[End of Code]", program_counter, "hlt")) # create hlt PLine Instance at end of the PLine list
+        program_counter += 1                                                            # add 1 byte for HLT instruction
 
-            # Add jump locations to if, else, and while sections of pline_list
-            pline_list = cf.add_jumps(pline_list)
+        # Add jump locations to if, else, and while sections of pline_list
+        pline_list = cf.add_jumps(pline_list)
 
-    except FileNotFoundError:
-        print("File not found. Please check the file path.")
-    except Exception as e:
-        print(f"An error occurred: {e}")
+    output_path = Path(__file__).with_name('test.ymc')
+    output_path_str = output_path.absolute()
 
-    # Write assembly to file
-    with open("file.ymc", "w") as file:
+    # Write assembly to file r"C:\Users\jacob\OneDrive\Desktop\School\Fall 2023\CSC 365 CA\group project\test\src\ymc\test.ymc"
+    with open(output_path_str, "w") as file:
         for pline in pline_list:
             file.write(pline.YMC_string)
 
 
 if __name__ == '__main__':
-    main("file.hlc")
+    input_path = Path(__file__).with_name('test.hlc')
+    input_path_str = input_path.absolute()
+    main(input_path_str)

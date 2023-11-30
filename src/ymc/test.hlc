@@ -1,0 +1,7 @@
+unsigned a b c
+signed x y z
+
+a = 5
+
+while a > 0
+    a = a - 1

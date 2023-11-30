@@ -14,35 +14,42 @@ class PLine:
         self.YMC_string: str = "" # this will be updated by our switch statement
         self.assembly_string: str = ""
         self.registers: dict[str, bool] = {"EDX": False, "ECX": False, "EBX": False, "EAX": False}
-        arithmetic: list[str] = ["=", "+", "-", "*", "/"]
+        self.arithmetic: list[str] = ["=", "+", "-", "*", "/"]
+        self.type: int = self.set_type()
+        self.isParent: bool
+        self.parent: PLine
 
-        if self.text.startswith("signed" or "unsigned"): # delclaration
-            self.type = 1
+    def set_type(self) -> int:
+        t: int = 0
+        hlc_text: str = self.text.strip()
+        if hlc_text.startswith("signed") or self.text.startswith("unsigned"): # delclaration
+            t = 1
             self.isParent = False
-        elif self.text.startswith("if" or "else" or "while"): # relational
-            self.type = 3
+        elif hlc_text.startswith("if") or self.text.startswith("else") or self.text.startswith("while"): # relational
+            t = 3
             self.isParent = True
+        elif hlc_text.startswith("print"): # print
+            t = 4
+            self.isParent = False
         # Checks if any character from the arithmetic list is found in self.text
-        elif any(x in self.text for x in arithmetic): # arithmetic
-            self.type = 2
+        elif any(x in hlc_text for x in self.arithmetic): # arithmetic
+            t = 2
             self.isParent = False
-        elif self.text.startswith("print"): # print
-            self.type = 4
-            self.isParent = False
+        return t
 
     def set_register(self, reg:str):
         for key in self.registers:
             if reg == key:
                 self.registers[reg] = True
 
-    def set_YMC(self, ymc: str): # this is how we will store the YMC string
+    def set_YMC(self, ymc: str): 
         self.YMC_string = ymc
 
-    def append_YMC(self, ymc: str): # this is how we will store the YMC string
-        self.YMC_string += ymc +"\n"
+    def append_YMC(self, ymc: str): 
+        self.YMC_string += ymc + "\n"
 
     def add_jump_loc(self, address: int): # this is used when adding locations to jumps.
-        self.YMC_string += " " + str(address)
+        self.YMC_string += " " + str(address) + "\n"
 
     def add_parent(self, parent):
         self.parent: PLine = parent
