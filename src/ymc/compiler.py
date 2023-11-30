@@ -57,12 +57,12 @@ def main(file_path):
 
     output_path = Path(__file__).with_name('test.ymc')
     output_path_str = output_path.absolute()
-
     # Write assembly to file r"C:\Users\jacob\OneDrive\Desktop\School\Fall 2023\CSC 365 CA\group project\test\src\ymc\test.ymc"
     with open(output_path_str, "w") as file:
+        string = ""
         for pline in pline_list:
-            file.write(pline.YMC_string)
-
+            string += pline.YMC_string
+        file.write(string)
 
 if __name__ == '__main__':
     input_path = Path(__file__).with_name('test.hlc')
