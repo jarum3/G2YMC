@@ -2,6 +2,10 @@ unsigned a b c
 signed x y z
 
 a = 5
+b = 3
 
-while a > 0
+if a > 0
+    print a
     a = a - 1
+else
+    print b

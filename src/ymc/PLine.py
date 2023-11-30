@@ -18,6 +18,8 @@ class PLine:
         self.type: int = self.set_type()
         self.isParent: bool
         self.parent: PLine
+        self.last_child: PLine = PLine
+        self.address: int = int
 
     def set_type(self) -> int:
         t: int = 0
@@ -35,6 +37,9 @@ class PLine:
         elif any(x in hlc_text for x in self.arithmetic): # arithmetic
             t = 2
             self.isParent = False
+        elif hlc_text.startswith("[End of Code]"): # halt
+            t = 5
+            self.isParent = False
         return t
 
     def set_register(self, reg:str):
@@ -44,6 +49,9 @@ class PLine:
 
     def set_YMC(self, ymc: str): 
         self.YMC_string = ymc
+
+    def add_YMC(self, ymc: str): 
+        self.YMC_string += ymc
 
     def append_YMC(self, ymc: str): 
         self.YMC_string += ymc + "\n"

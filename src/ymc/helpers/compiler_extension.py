@@ -9,6 +9,7 @@
 import math
 from PLine import PLine
 import helpers.compiler_functions as cf
+import operator 
 
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
@@ -38,6 +39,7 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
     line_text: str = pline_instance.text # grab text from line
     vars: list[str] = line_text.split()   # split variables in line into list.
     counter: int = 0
+    signed: list[str] = ["x", "y", "z"]
 
     assignment: str = vars[0] # get variable we are assigning a value to
     del vars[0]     # delete the variable being assiged cause its stored 
@@ -97,8 +99,9 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
         operators: list[str] = [vars[1], vars[3]]
         first_op_isSigned: bool
         second_op_isSigned: bool
+
         if arguments[0] < 0 or arguments[1] < 0:
-                first_op_isSigned = True
+            first_op_isSigned = True
         else:
             first_op_isSigned = False
         if arguments[2] < 0:
@@ -138,20 +141,7 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
     counter = 0
     right_operand = line_list[1]
     left_operand = line_list[1]
-    if type == "if":            # check if line is if/else statement or while loop                                                                 
-        pline_instance.append_YMC("movrm ecx, " + str(variables[right_operand]))
-        counter += 4
-        pline_instance.append_YMC("movrl eax," + str(variables[left_operand]))
-        counter += 3
-    
-    elif type == "else":  
-        pline_instance.append_YMC("cmprr eax, ecx")
-        counter += 2            # ADD 2 bytes for cmprr                                                               
-        pline_instance.set_register("EAX")  # set registers EAX and ECX
-        pline_instance.set_register("ECX")
-        
-    elif type == "while":
-
+    if type == "if" or type == "while":            # check if line is if/else statement or while loop                                                                 
         if str(first_operand) in variables:      # check if first operand is a variable
             pline_instance.append_YMC("movrm eax, " + str(variables[first_operand]))     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
@@ -172,17 +162,17 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         pline_instance.set_register("ECX")
 
         if sign == '=':
-            pline_instance.append_YMC("jne")
+            pline_instance.add_YMC("jne")
         elif sign == '!=':                             
-            pline_instance.append_YMC("je")
+            pline_instance.add_YMC("je")
         elif sign == '<':                              
-            pline_instance.append_YMC("jge")
+            pline_instance.add_YMC("jge")
         elif sign == '<=':                                     
-            pline_instance.append_YMC("jg")
+            pline_instance.add_YMC("jg")
         elif sign == '>':                                   
-            pline_instance.append_YMC("jle")
+            pline_instance.add_YMC("jle")
         elif sign == '>=':                                         
-            pline_instance.append_YMC("jl")
+            pline_instance.add_YMC("jl")
         
         counter += 3 # ADD 3 bytes to counter for jump
 
@@ -232,6 +222,10 @@ def printD(pline_instance: PLine) -> int:          # print statements
     print("Print line processed") 
     return counter
 
+def halt(pline_instance: PLine) -> int:
+    pline_instance.set_YMC("hlt")
+    return 1
+
 def default_case(pline_instance: PLine) -> int:
     print("Default case processed. Something went very wrong")  
     return 0 
@@ -241,5 +235,6 @@ switch_dict = {
     1: declaration,
     2: arithmetic,
     3: relational,
-    4: printD
+    4: printD,
+    5: halt
 }

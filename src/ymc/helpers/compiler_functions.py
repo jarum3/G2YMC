@@ -143,28 +143,35 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
     pline_hlt.set_address(address)  # set address in PLine instance to final ce.program_counter value
     return pline_hlt
 
-def add_jumps(pline_list: list[PLine]) -> list[PLine]:
-    pline_list_modified: list[PLine] = pline_list
+def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLine]:
     pi: int = 0 # Used to save index of parent for the incoming if statement
-    for p in pline_list_modified: # For PLine in pline_list
+    print_pline_list(pline_list)
+    pline: PLine = PLine
+
+    for p in pline_list:
+        if file_text[i + 1] == p.text:
+            pline = p
+
+    for p in pline_list: # For PLine in pline_list
         pl_addr: int = p.address  # store address of PLine in list
         c_index = 0     # store index of previous child (relevant to parent)
-        prev_line:PLine
 
         if p.text.startswith("while"):  # check if pline is a While loop
+            t: PLine = p.last_child
+
             for tp in pline_list[pi:]: # tp = trailing pLine from p_index onward
-                if hasattr(tp, 'parent') == False: # Find first pline
-                    pline_list[pi].add_jump_loc(tp.address) # add location outside of loop to the jmp instruction
+                if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + c_index) # set last child index to pi index + child index (relative to parent)
-                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+                    pline_list[pi].add_jump_loc(pline.address) # add location outside of loop to the jmp instruction
+                    pline_list[pi + lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
                 c_index += 1 # increase child index by 1
         elif p.text.startswith("if"):  # check if pline is a While loop
             for tp in pline_list[pi:]: # tp = trailing pLine from p_index onward
-                if hasattr(tp, 'parent') == False: # Find first pline
-                    pline_list[pi].add_jump_loc(tp.address) # add location outside of loop to the jmp instruction
+                if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + c_index) # set last child index to pi index + child index (relative to parent)
-                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+                    pline_list[pi].add_jump_loc(pline.address) # add location outside of loop to the jmp instruction
+                    pline_list[pi + lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
                 c_index += 1 # increase child index by 1
 
@@ -176,4 +183,14 @@ def add_jumps(pline_list: list[PLine]) -> list[PLine]:
                     pline_list[lc_index].append_YMC("jmp " + str(pl_addr))
             break
         pi += 1    # increase parent index by one 
-    return pline_list_modified  
+    return pline_list 
+
+def print_pline_list(pline_list: list[PLine]):
+    for p in pline_list:
+        print (p.text)
+        print (str(p.address)) 
+        print (p.YMC_string)
+        print ("")
+
+def set_last_child(parent: PLine, pline_instance: PLine):
+    parent.last_child = pline_instance

@@ -3,11 +3,14 @@ movmr 1023, eax
 movrm eax, 1023
 movrl ecx, 0
 cmprr eax, ecx
-jle
- 7
-jmp 7
+jle 48
+movrm eax, 1023
+outs eax
 movrm eax, 1023
 movrl ebx, 1
 sub eax, ebx
 movmr 1023, eax
+movrl eax, 3
+movmr 1022, eax
+jmp 7
 hlt
