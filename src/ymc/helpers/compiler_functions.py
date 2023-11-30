@@ -146,7 +146,7 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
 def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLine]:
     pi: int = 0 # Used to save index of parent for the incoming if statement
     print_pline_list(pline_list)
-    pline: PLine = PLine
+    pline: PLine = PLine("")
 
     for p in pline_list:
         if file_text[i + 1] == p.text:
