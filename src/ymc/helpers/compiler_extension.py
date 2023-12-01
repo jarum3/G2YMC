@@ -5,11 +5,9 @@
 #   Extension to the compiler to handle actual translation
 #
 #######################################################################
-
-import math
+from __future__ import annotations
 from PLine import PLine
 import helpers.compiler_functions as cf
-import operator 
 
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
@@ -134,14 +132,13 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
 def relational(pline_instance: PLine) -> int: # if/else and while statements, start by checking what each line is
     line_text: str = pline_instance.text  # grab text from line
     line_list: list[str] = line_text.split()   # split line into list.
-    type: str = line_list[0]                                                             
-    first_operand = line_list[1]
-    sign: str = line_list[2]
-    limit = line_list[3]
+    type: str = line_list[0]   
     counter = 0
-    right_operand = line_list[1]
-    left_operand = line_list[1]
-    if type == "if" or type == "while":            # check if line is if/else statement or while loop                                                                 
+
+    if type == "if" or type == "while":            # check if line is if/else statement or while loop                                                        
+        first_operand: str = line_list[1]
+        sign: str = line_list[2]
+        limit = line_list[3]                                                              
         if str(first_operand) in variables:      # check if first operand is a variable
             pline_instance.append_YMC("movrm eax, " + str(variables[first_operand]))     # ADD YMC Instruction
             counter += 4            # ADD 4 bytes for movrm
@@ -175,6 +172,8 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
             pline_instance.add_YMC("jl")
         
         counter += 3 # ADD 3 bytes to counter for jump
+    else:
+        pline_instance.set_YMC("[Else]\n")
 
     print("Relational line processed") 
     return counter

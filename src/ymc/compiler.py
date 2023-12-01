@@ -5,7 +5,7 @@
 #   HLC to YMC Compiler
 #
 #######################################################################
-
+from __future__ import annotations      # It won't let me run the script without this in Compiler, CE, and CF
 from PLine import PLine
 import helpers.compiler_extension as ce
 import helpers.compiler_functions as cf
@@ -58,14 +58,17 @@ def main(file_path) -> list[PLine]:
     # Add jump locations to if, else, and while sections of pline_list
     pline_list = cf.add_jumps(file_text, i, pline_list)
 
-    output_path = Path(__file__).with_name('test.ymc')
+    file_name = 'test.ymc'
+    output_path = Path(__file__).with_name(file_name)
     output_path_str = output_path.absolute()
     # Write assembly to file r"C:\Users\jacob\OneDrive\Desktop\School\Fall 2023\CSC 365 CA\group project\test\src\ymc\test.ymc"
     with open(output_path_str, "w") as file:
         string = ""
         for pline in pline_list:
-            string += pline.YMC_string
+            if not pline.type is 1:     # don't include the signed/unsigned PLine types when writing YMC
+                string += str(pline.address) + "\t" + pline.YMC_string  # Added starting address of the YMC string groups inside the PLines
         file.write(string)
+    print("HLC has been translated to YMC and stored in '" + file_name + "'")
 
     return pline_list
 

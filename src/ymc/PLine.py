@@ -24,7 +24,7 @@ class PLine:
     def set_type(self) -> int:
         t: int = 0
         hlc_text: str = self.text.strip()
-        if hlc_text.startswith("signed") or self.text.startswith("unsigned"): # delclaration
+        if hlc_text.startswith("signed") or self.text.startswith("unsigned"): # declaration
             t = 1
             self.isParent = False
         elif hlc_text.startswith("if") or self.text.startswith("else") or self.text.startswith("while"): # relational

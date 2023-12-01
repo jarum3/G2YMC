@@ -1,6 +1,7 @@
 # Just some functions that I made to clean up the compiler and compiler_extension programs
 # Jacob Duncan
 
+from __future__ import annotations
 from PLine import PLine
 
 # Function to get the number of lines in a file, didn't feel big enough to make a new file for it
@@ -145,7 +146,6 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
 
 def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLine]:
     pi: int = 0 # Used to save index of parent for the incoming if statement
-    print_pline_list(pline_list)
     pline: PLine = PLine("")
 
     for p in pline_list:
@@ -153,35 +153,27 @@ def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLi
             pline = p
 
     for p in pline_list: # For PLine in pline_list
-        pl_addr: int = p.address  # store address of PLine in list
-        c_index = 0     # store index of previous child (relevant to parent)
+        pl_addr: int = pline.address  # store address of PLine in list
+        ci: int = 0     # store index of previous child (relevant to parent)
 
         if p.text.startswith("while"):  # check if pline is a While loop
-            t: PLine = p.last_child
-
-            for tp in pline_list[pi:]: # tp = trailing pLine from p_index onward
+            #t: PLine = p.last_child
+            for tp in pline_list[pi + 1:]: # tp = trailing pLine from p_index onward
                 if hasattr(tp, 'parent') == False: # Find first pline where its not a child
-                    lc_index: int = (pi + c_index) # set last child index to pi index + child index (relative to parent)
+                    lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
                     pline_list[pi].add_jump_loc(pline.address) # add location outside of loop to the jmp instruction
-                    pline_list[pi + lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+                    pline_list[lc_index].append_YMC("jmp " + str(pline_list[pi].address))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
-                c_index += 1 # increase child index by 1
+                ci += 1 # increase child index by 1
         elif p.text.startswith("if"):  # check if pline is a While loop
-            for tp in pline_list[pi:]: # tp = trailing pLine from p_index onward
-                if hasattr(tp, 'parent') == False: # Find first pline where its not a child
-                    lc_index: int = (pi + c_index) # set last child index to pi index + child index (relative to parent)
-                    pline_list[pi].add_jump_loc(pline.address) # add location outside of loop to the jmp instruction
-                    pline_list[pi + lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+            for tp in pline_list[pi + 1:]: # tp = trailing pLine from p_index onward
+                if hasattr(tp, 'parent') == False or tp.text.startswith('else'): # Find first pline where its not a child
+                    lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
+                    pline_list[pi].add_jump_loc(pline_list[lc_index + 1].address) # add location outside of loop to the jmp instruction
+                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
-                c_index += 1 # increase child index by 1
-
-        elif p.text.startswith("else"):  # check if pline is a While loop
-            for tp in pline_list[pi:]:
-                if hasattr(tp, 'child') == True:
-                    pline_list[pi].add_jump_loc(tp.address)
-                    lc_index: int = (pi + c_index)
-                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))
-            break
+                ci += 1 # increase child index by 1
+        
         pi += 1    # increase parent index by one 
     return pline_list 
 
