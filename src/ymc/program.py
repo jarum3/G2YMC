@@ -29,7 +29,6 @@ class Program:
         self.bodyList.append(line)
         self.bodyDict[self.address] = line
         self.hlcLines[self.address] = hlc
-        print (self.hlcLines)
         self.address += self.instructions[text.split(" ")[0]].width
         self.count += 1
 
@@ -39,10 +38,10 @@ class Program:
         newLine = lineChunks[0] + str(address)
         self.bodyList[self.tabCount - 1] = newLine
         for key in self.bodyDict:
-          if self.bodyDict[key] == line:
-            lineAddr = key
-            self.bodyDict[lineAddr] = newLine
-            break
+            if self.bodyDict[key] == line:
+                lineAddr = key
+                self.bodyDict[lineAddr] = newLine
+                break
     def removeParent(self) -> None:
         self.tabbed = False
         self.tabParent = None

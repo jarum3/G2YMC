@@ -61,9 +61,7 @@ def main():
             instrBinary: str = bc.hexToBinary(instruction.hexCode)
             ymcBinary: str = instrBinary + "".join(args)
             ymcHex: str = instruction.hexCode
-            print(address)
             ymc: str = ymcDict[address]
-            print(ymc)
             # Match current chunk of code to YMC lines (Preserves negatives, etc)
             
             # If we have literals of, for example, -1 and 255 in the same chunk, this will actually always assign to the latter one
@@ -101,7 +99,6 @@ def main():
             if changedRegs:
                 changedRegsStr = str(changedRegs)
             # Write content to row of CSV
-            print([lineText, address, ymc, ymcHex, output, changedRegsStr, changedFlagsStr])
             writer.writerow(
                 [lineText, address, ymc, ymcHex, output, changedRegsStr, changedFlagsStr]
             )
