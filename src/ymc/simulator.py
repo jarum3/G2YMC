@@ -35,7 +35,7 @@ def decode(instructions: dict[str, Instruction], instructionPointer: int) -> tup
   return (instruction, args) # Return a tuple of the instruction and the list of arguments
 
 ## Execute an instruction's function with the arguments passed
-def execute(instruction: Instruction, args: list[str]) -> str | None:
+def execute(instruction: Instruction, args: list[str]) -> str:
   cpu.instructionPointer += instruction.width # Increment instruction pointer BEFORE function, in case function is a jump
   with redirect_stdout(io.StringIO()) as output:
     if len(args) > 0: # If we have args, use them
@@ -44,6 +44,8 @@ def execute(instruction: Instruction, args: list[str]) -> str | None:
       instruction.function() # Execute with no arguments
     if output.getvalue():
       return output.getvalue()
+    else:
+      return ""
 
 def main():
     # Should use files asm.pkl to convert from assembly code to binary
