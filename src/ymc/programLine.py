@@ -178,9 +178,10 @@ class programLine:
             match self.program.tabParentType:
                 case "loop":
                     if self.program.tabParent:
+                        tabParent = self.program.tabParent
                         self.program.removeParent()
                         self.program.addLine(
-                            "jmp " + str(self.program.jmpAddress), self.program.tabParent
+                            "jmp " + str(self.program.jmpAddress), tabParent
                         )
                         self.program.replaceJump(self.program.address)
                 case "if":  ## End of if
