@@ -42,7 +42,7 @@ def main(file_path) -> list[PLine]:
         pline_instance.set_type()
             
         # Setting the parent of the each line instance
-        if pline_instance.text.startswith('   '):
+        if pline_instance.text.startswith(' '):
             cf.set_parent(pline_instance, pline_list, i)
             is_last_line = line_number == len(file_text) - 1
             next_line = file_text[line_number + 1]

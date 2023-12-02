@@ -1,21 +1,48 @@
-0	movrl eax, 5
+0	movrl eax, 3
 movmr 1023, eax
-7	movrl eax, 3
+7	movrl eax, 15
+movrm ebx, 1023
+add eax, ebx
 movmr 1022, eax
-14	movrm eax, 1023
+20	movrm eax, 1022
+movrm ebx, 1023
+movrl ecx, 10
+muldiv eax, ebx, ecx
+movmr 1021, eax
+38	movrl eax, -5
+movmr 1020, eax
+45	movrl eax, 13
+movmr 1019, eax
+52	movrm eax, 1021
+movrl ecx, 10
+cmprr eax, ecx
+jg 80
+64	movrm eax, 1019
+movrl ebx, 10
+add eax, ebx
+movmr 1020, eax
+jmp 93
+80	80	movrm eax, 1019
+movrl ebx, 10
+add eax, ebx
+movmr 1020, eax
+93	movrm eax, 1019
 movrl ecx, 0
 cmprr eax, ecx
-jle 48
-26	movrm eax, 1023
-outs eax
-32	movrm eax, 1023
+jle 147
+105	movrm eax, 1019
+outu eax
+114	outnl
+118	movrm eax, 1020
+outu eax
+127	outnl
+131	movrm eax, 1019
 movrl ebx, 1
 sub eax, ebx
-movmr 1023, eax
-jmp 54
-48	[Else]
-48	movrm eax, 1022
-outs eax
-54	movrl eax, 10
+movmr 1019, eax
+jmp 93
+147	movrl eax, 15
 movmr 1022, eax
-61	hlt
+154	movrl eax, 12
+movmr 1021, eax
+161	hlt

@@ -147,33 +147,38 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
 def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLine]:
     pi: int = 0 # Used to save index of parent for the incoming if statement
     pline: PLine = PLine("")
+    lc_if = 0 # Save index of last child in if statement for when we add
 
     for p in pline_list:
         if file_text[i + 1] == p.text:
             pline = p
 
     for p in pline_list: # For PLine in pline_list
-        pl_addr: int = pline.address  # store address of PLine in list
         ci: int = 0     # store index of previous child (relevant to parent)
-
         if p.text.startswith("while"):  # check if pline is a While loop
             #t: PLine = p.last_child
             for tp in pline_list[pi + 1:]: # tp = trailing pLine from p_index onward
                 if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
-                    pline_list[pi].add_jump_loc(pline.address) # add location outside of loop to the jmp instruction
+                    pline_list[pi].add_jump_loc(str(pline_list[lc_index + 1].address)) # add location outside of loop to the jmp instruction
                     pline_list[lc_index].append_YMC("jmp " + str(pline_list[pi].address))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
                 ci += 1 # increase child index by 1
-        elif p.text.startswith("if"):  # check if pline is a While loop
-            for tp in pline_list[pi + 1:]: # tp = trailing pLine from p_index onward
-                if hasattr(tp, 'parent') == False or tp.text.startswith('else'): # Find first pline where its not a child
+        elif p.text.startswith("if"):  # check if pline is an if
+            for tp in pline_list[pi + 1:]:
+                if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
-                    pline_list[pi].add_jump_loc(pline_list[lc_index + 1].address) # add location outside of loop to the jmp instruction
-                    pline_list[lc_index].append_YMC("jmp " + str(pl_addr))  # add jmp instruction to end of last child back to parent address
+                    pline_list[pi].add_jump_loc(str(pline_list[lc_index + 1].address)) # add location outside of loop to the jmp instruction
+                    lc_if = lc_index
                     break           # break loop if reaching end
                 ci += 1 # increase child index by 1
-        
+        elif p.text.startswith("else"):  # check if pline is an else
+             for tp in pline_list[pi + 1:]:
+                if hasattr(tp, 'parent') == False: # Find first pline where its not a child
+                    lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
+                    pline_list[lc_if].append_YMC("jmp " + str(pline_list[lc_index + 1].address))  # add jmp instruction to end of last child of if statement with the address as the first instruction after else's children
+                    break           # break loop if reaching end
+                ci += 1 # increase child index by 1
         pi += 1    # increase parent index by one 
     return pline_list 
 

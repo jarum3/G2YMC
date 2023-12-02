@@ -1,13 +1,21 @@
 unsigned a b c
 signed x y z
 
-a = 5
-b = 3
+a = 3
+b = 15 + a
+c = b * a / 10
 
-if a > 0
-    print a
-    a = a - 1
+x = -5
+y = 13
+
+if c <= 10
+  x = y + 10
 else
-    print b
+  x = y + 10
 
-b = 10
+while y > 0
+  print y
+  print \n
+  print x
+  print \n
+  y = y - 1
