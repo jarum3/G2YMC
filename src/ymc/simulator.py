@@ -53,7 +53,7 @@ def main():
     with open("instructions/instructionsByHex.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
     loadFile("file.bin") # Load in the binary file
-    while (True): # Loop until we find a halt
+    while (not cpu.exiting): # Loop until we find a halt
       (instruction, args) = decode(instructions, cpu.instructionPointer) # Decode instruction
       output = execute(instruction, args) # Execute instruction
       if output:

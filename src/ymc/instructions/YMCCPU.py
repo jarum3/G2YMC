@@ -22,3 +22,4 @@ typeWidths: dict[str, int] = {
     "register-register": 1,
     "memory": 2,
 }
+exiting: bool = False

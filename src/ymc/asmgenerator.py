@@ -24,7 +24,7 @@ def main():
     # Instruction name, hex code, total width, argument types, function, and optional general flags and carry flags
     # All can be found in encoding document, just written down in code
     # Halt, uses built-in exit
-    addDict(Instruction("hlt", "A0", 1, None, exit))
+    addDict(Instruction("hlt", "A0", 1, None, halt))
     # Output instructions
     addDict(Instruction("outs", "A1", 2, ["register"], outputSigned))
     addDict(Instruction("outu", "A2", 2, ["register"], outputUnsigned))

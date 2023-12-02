@@ -5,11 +5,10 @@
 #   Final main file
 #
 #######################################################################
-from ast import arg
+from programLine import programLine
 from instructions.Instruction import Instruction
 import helpers.registerLookup as rg
 import helpers.binaryConversion as bc
-from PLine import PLine
 import compiler as cm
 import simulator as sm
 import encoder as en
@@ -19,20 +18,13 @@ import math
 
 def main():
     # Compile file.hlc, and save its list to a variable
-    pline_list: list[PLine] = cm.main("file.hlc")
+    (hlcDict, ymcDict) = cm.main("file.hlc", "file.ymc", False)
     # Save both instruction dictionaries, one for the simulation, and one for encoding
     with open("instructions/instructionsByHex.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
     with open("instructions/instructionsByName.pkl", "rb") as file:
         instructionsByName: dict[str, Instruction] = pickle.load(file)
     # Get range of addresses for each HLC line, to assign HLC lines to YMC lines
-    ranges: list[tuple[int, int]] = []
-    for i, line in enumerate(pline_list):
-        minimum: int = line.address
-        maximum: int = 1024
-        if len(pline_list) > i + 1:
-            maximum = pline_list[i + 1].address - 1
-        ranges.append((minimum, maximum))
     en.main()  # Encode file.ymc to file.bin
     sm.loadFile("file.bin")  # Load in the binary file
     with open("output.csv", "w", newline="") as file:  # Open CSV to write to
@@ -48,16 +40,14 @@ def main():
             "Modified Flags",
         ]
         writer.writerow(fields) # Writing headers
-        while True: # Keep going until a halt is found
+        while not sm.cpu.exiting: # Keep going until a halt is found
             address: int = sm.cpu.instructionPointer # Current address for instruction to read
-            line = PLine("")
-            lineText: str = ""
             # Find HLC Line with an address range matching our current address
-            for i, potentialRange in enumerate(ranges):
-                if address >= potentialRange[0] and address <= potentialRange[1]:
-                    # Save matching HLC line, and its text formatted for the CSV
-                    line = pline_list[i]
-                    lineText = line.text.replace("\n", "").replace("  ", "")
+            line = hlcDict[address]
+            if line:
+                lineText = line.replace("\n", "").replace("  ", "")
+            else:
+                lineText = "compiler"
             # Save starting flags and registers
             startFlags: dict[str, bool] = sm.cpu.flags
             # We need to save strings as copies, since they'll be references otherwise
@@ -71,38 +61,15 @@ def main():
             instrBinary: str = bc.hexToBinary(instruction.hexCode)
             ymcBinary: str = instrBinary + "".join(args)
             ymcHex: str = instruction.hexCode
-            ymc: str = ""
+            print(address)
+            ymc: str = ymcDict[address]
+            print(ymc)
             # Match current chunk of code to YMC lines (Preserves negatives, etc)
             
             # If we have literals of, for example, -1 and 255 in the same chunk, this will actually always assign to the latter one
             # However, they're equivalent binary! So they might as well be the same line of code
             # For example, 255 + 255 = 254 once you truncate to 8 bits
             # And obviously 255 + -1 is also 254.
-            for ymcLine in line.YMC_string.splitlines():
-                if en.getBinaryFromLine(ymcLine, instructionsByName) == ymcBinary:
-                    ymc = ymcLine
-            # If we didn't find a matching line, try to parse as 
-            if not ymc:
-                ymc = instruction.instruction
-                if instruction.argTypes:
-                    i = 0
-                    for i, argType in enumerate(instruction.argTypes):
-                        ymc += " "
-                        match argType:
-                            case "literal":
-                                ymc += str(bc.unsignedBinaryToInt(args[i]))
-                            case "register-register":
-                                regs: list[str] = rg.eightBitToRegisters(args[i])
-                                ymc += regs[0] + ", " + regs[1]
-                            case "register":
-                                ymc += rg.fourBitToRegister(args[i])
-                            case "memory":
-                                ymc += str(bc.BinaryToAddr(args[i]))
-                            case _:
-                                print(args[i])
-                                ymc += "ERROR"
-                        if len(args) > i - 1:
-                            ymc += ","
             if args:
                 # Convert binary to hex, fill it to multiple of 2, and make it uppercase
                 ymcHex += (
@@ -134,6 +101,7 @@ def main():
             if changedRegs:
                 changedRegsStr = str(changedRegs)
             # Write content to row of CSV
+            print([lineText, address, ymc, ymcHex, output, changedRegsStr, changedFlagsStr])
             writer.writerow(
                 [lineText, address, ymc, ymcHex, output, changedRegsStr, changedFlagsStr]
             )
