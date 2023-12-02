@@ -1,45 +1,44 @@
-This also contains every address of each instruction, allowing for easier checking of jump logic
 0	movrl eax, 3
-3	movmr 1001, eax
+3	movmr 1023, eax
 7	movrl eax, 15
-10	movrm ecx, 1001
-14	add eax, ecx
-16	movmr 1002, eax
-20	movrm eax, 1002
-24	movrm ebx, 1001
+10	movrm ebx, 1023
+14	add eax, ebx
+16	movmr 1022, eax
+20	movrm eax, 1022
+24	movrm ebx, 1023
 28	movrl ecx, 10
 31	muldiv eax, ebx, ecx
-34	movmr 1003, eax
+34	movmr 1021, eax
 38	movrl eax, -5
-41	movmr 1004, eax
+41	movmr 1020, eax
 45	movrl eax, 13
-48	movmr 1005, eax
-52	movrm eax, 1003
+48	movmr 1019, eax
+52	movrm eax, 1021
 56	movrl ecx, 10
 59	cmprr eax, ecx
 61	jg 80
-64	movrm eax, 1005
-68	movrl ecx, 10
-71	add eax, ecx
-73	movmr 1004, eax
+64	movrm eax, 1019
+68	movrl ebx, 10
+71	add eax, ebx
+73	movmr 1020, eax
 77	jmp 93
-80	movrm eax, 1005
-84	movrl ecx, 20
-87	sub eax, ecx
-89	movmr 1004, eax
-93	movrm eax, 1005
+80	movrm eax, 1019
+84	movrl ebx, 20
+87	sub eax, ebx
+89	movmr 1020, eax
+93	movrm eax, 1019
 97	movrl ecx, 0
 100	cmprr eax, ecx
 102	jle 135
-105	movrm eax, 1005
+105	movrm eax, 1019
 109	outs eax
 111	outnl
-112	movrm eax, 1004
+112	movrm eax, 1020
 116	outs eax
 118	outnl
-119	movrm eax, 1005
-123	movrl ecx, 1
-126	sub eax, ecx
-128	movmr 1005, eax
+119	movrm eax, 1019
+123	movrl ebx, 1
+126	sub eax, ebx
+128	movmr 1019, eax
 132	jmp 93
 135	hlt
