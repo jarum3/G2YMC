@@ -18,8 +18,8 @@ class PLine:
         self.type: int = self.set_type()
         self.isParent: bool
         self.parent: PLine
-        self.last_child: PLine = PLine
-        self.address: int = int
+        self.last_child: PLine
+        self.address: int
 
     def set_type(self) -> int:
         t: int = 0
