@@ -15,7 +15,6 @@ import csv
 import pickle
 import math
 
-
 def main():
     # Compile file.hlc, and save its list to a variable
     pline_list = cm.main("file.hlc")
@@ -59,6 +58,8 @@ def main():
                     lineText = line.text.replace("\n", "").replace("  ", "")
             # Save starting flags and registers
             startFlags = sm.cpu.flags
+            # We need to save strings as copies, since they'll be references otherwise
+            # And those won't let us compare
             startRegs: dict[str, str] = {}
             for key in sm.cpu.registers:
               startRegs[key] = sm.cpu.registers[key]
@@ -80,11 +81,13 @@ def main():
                     .zfill(math.floor(len(ymcBinary) / 4))[2:]
                     .upper()
                 )
-            output = ""
-            output += sm.execute(instruction, args)  # Execute instruction
-            output = output.replace("\n", "\\n")
+            # Grab output, execute instruction
+            output = sm.execute(instruction, args)  # Execute instruction
+            output = output.replace("\n", "\\n") # Format output
+            # Save ending state of flags/registers
             endFlags = sm.cpu.flags
             endRegs = sm.cpu.registers
+            # Generate difference of flags/registers
             changedFlags: dict[str, bool] = {}
             changedRegs: dict[str, str] = {}
             # Loop through each flag and register to see if they changed, if they did, add them to the list
@@ -94,12 +97,14 @@ def main():
             for key in endRegs:
                 if startRegs[key] != endRegs[key]:
                     changedRegs[key] = hex(int(endRegs[key], 2))[2:].zfill(2).upper()
+            # Convert flags and registers into strings to be used in CSV
             changedFlagsStr = ""
             changedRegsStr = ""
             if changedFlags:
                 changedFlagsStr = str(changedFlags)
             if changedRegs:
                 changedRegsStr = str(changedRegs)
+            # Write content to row of CSV
             writer.writerow(
                 [lineText, address, ymc, ymcHex, output, changedRegsStr, changedFlagsStr]
             )
