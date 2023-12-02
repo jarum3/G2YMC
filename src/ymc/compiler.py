@@ -65,8 +65,9 @@ def main(file_path) -> list[PLine]:
     with open(output_path_str, "w") as file:
         string = ""
         for pline in pline_list:
-            if not pline.type is 1:     # don't include the signed/unsigned PLine types when writing YMC
-                string += str(pline.address) + "\t" + pline.YMC_string  # Added starting address of the YMC string groups inside the PLines
+            if not pline.type == 1:     # don't include the signed/unsigned PLine types when writing YMC
+                string += str(pline.address) + "\t" # Added starting address of the YMC string groups inside the PLines
+                string += pline.YMC_string
         file.write(string)
     print("HLC has been translated to YMC and stored in '" + file_name + "'")
 

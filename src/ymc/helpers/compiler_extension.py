@@ -173,7 +173,7 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         
         counter += 3 # ADD 3 bytes to counter for jump
     else:
-        pline_instance.set_YMC("[Else]\n")
+        pline_instance.set_YMC("")
 
     print("Relational line processed") 
     return counter
@@ -192,7 +192,7 @@ def printD(pline_instance: PLine) -> int:          # print statements
     counter: int = 0
 
 
-    if arg == "\n":                # check if new line
+    if arg == "\\n":                # check if new line
         pline_instance.set_YMC("outnl\n") 
         counter += 1                 # Increase program counter by 1 (outnl [1 byte])
         return counter
