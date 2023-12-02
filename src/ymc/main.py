@@ -5,7 +5,9 @@
 #   Final main file
 #
 #######################################################################
+from ast import arg
 from instructions.Instruction import Instruction
+import helpers.registerLookup as rg
 import helpers.binaryConversion as bc
 from PLine import PLine
 import compiler as cm
@@ -17,7 +19,7 @@ import math
 
 def main():
     # Compile file.hlc, and save its list to a variable
-    pline_list = cm.main("file.hlc")
+    pline_list: list[PLine] = cm.main("file.hlc")
     # Save both instruction dictionaries, one for the simulation, and one for encoding
     with open("instructions/instructionsByHex.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
@@ -26,8 +28,8 @@ def main():
     # Get range of addresses for each HLC line, to assign HLC lines to YMC lines
     ranges: list[tuple[int, int]] = []
     for i, line in enumerate(pline_list):
-        minimum = line.address
-        maximum = 1024
+        minimum: int = line.address
+        maximum: int = 1024
         if len(pline_list) > i + 1:
             maximum = pline_list[i + 1].address - 1
         ranges.append((minimum, maximum))
@@ -36,7 +38,7 @@ def main():
     with open("output.csv", "w", newline="") as file:  # Open CSV to write to
         writer = csv.writer(file)  # Create CSV writer object
         # Headers for CSV
-        fields = [
+        fields: list[str] = [
             "HLC Instruction",
             "YMC Address",
             "YMC Assembly",
@@ -47,9 +49,9 @@ def main():
         ]
         writer.writerow(fields) # Writing headers
         while True: # Keep going until a halt is found
-            address = sm.cpu.instructionPointer # Current address for instruction to read
+            address: int = sm.cpu.instructionPointer # Current address for instruction to read
             line = PLine("")
-            lineText = ""
+            lineText: str = ""
             # Find HLC Line with an address range matching our current address
             for i, potentialRange in enumerate(ranges):
                 if address >= potentialRange[0] and address <= potentialRange[1]:
@@ -57,36 +59,63 @@ def main():
                     line = pline_list[i]
                     lineText = line.text.replace("\n", "").replace("  ", "")
             # Save starting flags and registers
-            startFlags = sm.cpu.flags
+            startFlags: dict[str, bool] = sm.cpu.flags
             # We need to save strings as copies, since they'll be references otherwise
             # And those won't let us compare
             startRegs: dict[str, str] = {}
             for key in sm.cpu.registers:
-              startRegs[key] = sm.cpu.registers[key]
+                startRegs[key] = sm.cpu.registers[key]
             # Decode instruction into instr and arguments
             (instruction, args) = sm.decode(instructions, sm.cpu.instructionPointer)
             # Generate binary for current chunk of code
-            instrBinary = bc.hexToBinary(instruction.hexCode)
-            ymcBinary = instrBinary + "".join(args)
-            ymcHex = instruction.hexCode
+            instrBinary: str = bc.hexToBinary(instruction.hexCode)
+            ymcBinary: str = instrBinary + "".join(args)
+            ymcHex: str = instruction.hexCode
             ymc: str = ""
             # Match current chunk of code to YMC lines (Preserves negatives, etc)
+            
+            # If we have literals of, for example, -1 and 255 in the same chunk, this will actually always assign to the latter one
+            # However, they're equivalent binary! So they might as well be the same line of code
+            # For example, 255 + 255 = 254 once you truncate to 8 bits
+            # And obviously 255 + -1 is also 254.
             for ymcLine in line.YMC_string.splitlines():
                 if en.getBinaryFromLine(ymcLine, instructionsByName) == ymcBinary:
                     ymc = ymcLine
+            # If we didn't find a matching line, try to parse as 
+            if not ymc:
+                ymc = instruction.instruction
+                if instruction.argTypes:
+                    i = 0
+                    for i, argType in enumerate(instruction.argTypes):
+                        ymc += " "
+                        match argType:
+                            case "literal":
+                                ymc += str(bc.unsignedBinaryToInt(args[i]))
+                            case "register-register":
+                                regs: list[str] = rg.eightBitToRegisters(args[i])
+                                ymc += regs[0] + ", " + regs[1]
+                            case "register":
+                                ymc += rg.fourBitToRegister(args[i])
+                            case "memory":
+                                ymc += str(bc.BinaryToAddr(args[i]))
+                            case _:
+                                print(args[i])
+                                ymc += "ERROR"
+                        if len(args) > i - 1:
+                            ymc += ","
             if args:
-              # Convert binary to hex, fill it to multiple of 2, and make it uppercase
+                # Convert binary to hex, fill it to multiple of 2, and make it uppercase
                 ymcHex += (
                     hex(int(ymcBinary, 2))
                     .zfill(math.floor(len(ymcBinary) / 4))[2:]
                     .upper()
                 )
             # Grab output, execute instruction
-            output = sm.execute(instruction, args)  # Execute instruction
+            output: str = sm.execute(instruction, args)  # Execute instruction
             output = output.replace("\n", "\\n") # Format output
             # Save ending state of flags/registers
-            endFlags = sm.cpu.flags
-            endRegs = sm.cpu.registers
+            endFlags: dict[str, bool] = sm.cpu.flags
+            endRegs: dict[str, str] = sm.cpu.registers
             # Generate difference of flags/registers
             changedFlags: dict[str, bool] = {}
             changedRegs: dict[str, str] = {}
@@ -98,8 +127,8 @@ def main():
                 if startRegs[key] != endRegs[key]:
                     changedRegs[key] = hex(int(endRegs[key], 2))[2:].zfill(2).upper()
             # Convert flags and registers into strings to be used in CSV
-            changedFlagsStr = ""
-            changedRegsStr = ""
+            changedFlagsStr: str = ""
+            changedRegsStr: str = ""
             if changedFlags:
                 changedFlagsStr = str(changedFlags)
             if changedRegs:
