@@ -155,7 +155,7 @@ def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLi
             for tp in pline_list[pi + 1:]: # tp = trailing pLine from p_index onward
                 if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
-                    pline_list[pi].add_jump_loc(str(pline_list[lc_index + 1].address)) # add location outside of loop to the jmp instruction
+                    pline_list[pi].add_jump_loc(pline_list[lc_index + 1].address) # add location outside of loop to the jmp instruction
                     pline_list[lc_index].append_YMC("jmp " + str(pline_list[pi].address))  # add jmp instruction to end of last child back to parent address
                     break           # break loop if reaching end
                 ci += 1 # increase child index by 1
@@ -163,7 +163,7 @@ def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLi
             for tp in pline_list[pi + 1:]:
                 if hasattr(tp, 'parent') == False: # Find first pline where its not a child
                     lc_index: int = (pi + ci) # set last child index to pi index + child index (relative to parent)
-                    pline_list[pi].add_jump_loc(str(pline_list[lc_index + 1].address)) # add location outside of loop to the jmp instruction
+                    pline_list[pi].add_jump_loc(pline_list[lc_index + 1].address) # add location outside of loop to the jmp instruction
                     lc_if = lc_index
                     break           # break loop if reaching end
                 ci += 1 # increase child index by 1
