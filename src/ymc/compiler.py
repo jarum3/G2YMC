@@ -56,7 +56,7 @@ def main(file_path) -> list[PLine]:
     # Add jump locations to if, else, and while sections of pline_list
     pline_list = cf.add_jumps(file_text, i, pline_list)
 
-    file_name = 'test.ymc'
+    file_name = 'assembly.ymc'
     output_path = Path(__file__).with_name(file_name)
     output_path_str = output_path.absolute()
     # Write assembly to file r"C:\Users\jacob\OneDrive\Desktop\School\Fall 2023\CSC 365 CA\group project\test\src\ymc\test.ymc"
@@ -72,6 +72,6 @@ def main(file_path) -> list[PLine]:
     return pline_list
 
 if __name__ == '__main__':
-    input_path = Path(__file__).with_name('test.hlc')
+    input_path = Path(__file__).with_name('code.hlc')
     input_path_str = input_path.absolute()
     main(input_path_str)

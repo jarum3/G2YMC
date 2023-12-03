@@ -1,0 +1,8 @@
+unsigned a b c
+signed x y z
+
+x = 127
+print x
+print \n
+x = x + 1
+print x

@@ -62,14 +62,14 @@ def main():
     with open("instructions/instructionsByName.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
     # Open input file
-    with open("file.ymc", "r") as file:
+    with open("assembly.ymc", "r") as file:
         for line in file:
             # Loop through lines of input files
             binary = getBinaryFromLine(line, instructions)
             if binary:
                 binaryString += binary
     # Write binary string
-    with open("file.bin", "w") as file:
+    with open("binary.bin", "w") as file:
         file.write(binaryString)
 
 

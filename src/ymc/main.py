@@ -19,7 +19,7 @@ import math
 
 def main():
     # Compile file.hlc, and save its list to a variable
-    pline_list: list[PLine] = cm.main("file.hlc")
+    pline_list: list[PLine] = cm.main("code.hlc")
     # Save both instruction dictionaries, one for the simulation, and one for encoding
     with open("instructions/instructionsByHex.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
@@ -34,7 +34,7 @@ def main():
             maximum = pline_list[i + 1].address - 1
         ranges.append((minimum, maximum))
     en.main()  # Encode file.ymc to file.bin
-    sm.loadFile("file.bin")  # Load in the binary file
+    sm.loadFile("binary.bin")  # Load in the binary file
     with open("output.csv", "w", newline="") as file:  # Open CSV to write to
         writer = csv.writer(file)  # Create CSV writer object
         # Headers for CSV

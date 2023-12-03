@@ -52,7 +52,7 @@ def main():
     # asm.pkl should contain object files for all instructions, with their assigned hex code and length being used to create binary data
     with open("instructions/instructionsByHex.pkl", "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
-    loadFile("file.bin") # Load in the binary file
+    loadFile("binary.bin") # Load in the binary file
     while (True): # Loop until we find a halt
       (instruction, args) = decode(instructions, cpu.instructionPointer) # Decode instruction
       output = execute(instruction, args) # Execute instruction
