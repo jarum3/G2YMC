@@ -24,34 +24,6 @@ def set_parent(pline_instance: PLine, pline_list: list[PLine], i: int):
         return
     pline_instance.add_parent(prev_line)
 
-def set2args(vars: list[str], variables: dict[str, int]) -> list[int]:
-    args = [0, 0]
-    if any(char.isdigit() for char in vars[0]): # processing first argument
-            args[0] = int(vars[0])
-    else:
-        args[0] = variables[vars[0]]
-    if any(char.isdigit() for char in vars[2]): # processing second argument
-        args[1] = int(vars[2])
-    else:
-        args[1] = variables[vars[2]]
-    return args
-
-def set3args(vars: list[str], variables: dict[str, int]) -> list[int]:
-    args = [0, 0, 0]
-    if any(char.isdigit() for char in vars[0]): # processing first argument
-            args[0] = int(vars[0])
-    else:
-        args[0] = variables[vars[0]]
-    if any(char.isdigit() for char in vars[2]): # processing second argument
-        args[1] = int(vars[2])
-    else:
-        args[1] = variables[vars[2]]
-    if any(char.isdigit() for char in vars[4]): # processing third argument
-        args[2] = int(vars[4])
-    else:
-        args[2] = variables[vars[4]]
-    return args
-
 def ymc_arithemtic_movs(vars: list[str], variables: dict[str, int], is3args: bool):
     mov_lines: str
     counter: int = 0
@@ -101,7 +73,7 @@ def ymc_operation_2args(operator: str, isSigned: bool) -> str:
     
     return operation_line
 
-def ymc_operation_3args(operators: list[str], first_op_isSigned: bool, second_op_isSigned: bool) -> str:
+def ymc_operation_3args(operators: list[str], isSigned: bool) -> str:
     operation_line: str = ""
     # Handle first operation.
     if operators[0] == "+":
@@ -109,12 +81,12 @@ def ymc_operation_3args(operators: list[str], first_op_isSigned: bool, second_op
     elif operators[0] == "-":
         operation_line = "sub"
     elif operators[0] == "*":
-        if first_op_isSigned == True:
+        if isSigned == True:
             operation_line = "smul"
         else:
             operation_line = "mul"
     elif operators[0] == "/":
-        if first_op_isSigned == True:
+        if isSigned == True:
             operation_line = "sdiv"
         else:
             operation_line = "div"
@@ -124,12 +96,12 @@ def ymc_operation_3args(operators: list[str], first_op_isSigned: bool, second_op
     elif operators[1] == "-":
         operation_line += "sub"
     elif operators[1] == "*":
-        if second_op_isSigned == True:
+        if isSigned == True:
             operation_line += "smul"
         else:
             operation_line += "mul"
     elif operators[1] == "/":
-        if second_op_isSigned == True:
+        if isSigned == True:
             operation_line += "sdiv"
         else:
             operation_line += "div"
