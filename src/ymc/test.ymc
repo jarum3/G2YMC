@@ -41,4 +41,10 @@ movrl ebx, 1
 sub eax, ebx
 movmr 1019, eax
 jmp 93
+movrm eax, 1019
+movrl ecx, 0
+cmprr eax, ecx
+jne 155
+movrl eax, 4
+outu eax
 hlt

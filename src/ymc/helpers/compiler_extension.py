@@ -157,7 +157,7 @@ def relational(pline_instance: PLine) -> int: # if/else and while statements, st
         pline_instance.set_register("EAX")  # set registers EAX and ECX
         pline_instance.set_register("ECX")
 
-        if sign == '=':
+        if sign == '==':
             pline_instance.add_YMC("jne")
         elif sign == '!=':                             
             pline_instance.add_YMC("je")
