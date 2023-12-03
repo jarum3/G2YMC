@@ -11,7 +11,6 @@ import helpers.compiler_functions as cf
 
 registers: dict[str, int] = {"EDX": 0, "ECX": 0, "EBX": 0, "EAX": 0}
 flags: dict[str, bool] = {"OF": False, "SF": False, "CF": False, "ZF": False}
-
 variables: dict[str, int] = {}
 
 ####################################
@@ -200,11 +199,11 @@ def printD(pline_instance: PLine) -> int:          # print statements
         arg_location: str = str(variables[arg])   # set location of arg to value in dictionary and convert to string
         if arg in unsigned:           # else if arg is an unsigned variable
             pline_instance.set_YMC("movrm eax, " + arg_location + "\n")   # set YMC instruction to first move arg_location to register eax, then outs eax 
-            pline_instance.append_YMC("outs eax")
+            pline_instance.append_YMC("outu eax")
             counter += 6                 # Increase program counter by 4 bytes (movrm) + 2 bytes (outs)
         elif arg in signed:           # else if arg is a signed variable
             pline_instance.set_YMC("movrm eax, " + arg_location + "\n") # same as unsigned but with 'outu eax'
-            pline_instance.append_YMC("outu eax")
+            pline_instance.append_YMC("outs eax")
             counter += 6       # Increase program counter by 4 bytes (movrm) + 2 bytes (outu)
     elif arg.startswith('-'):           # check if literal is negative
         pline_instance.set_YMC("movrl eax, " + arg + "\n")      # set YMC instruction to move literal arg to register eax

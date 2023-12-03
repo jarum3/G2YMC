@@ -11,7 +11,7 @@ y = 13
 if c <= 10
   x = y + 10
 else
-  x = y + 10
+  x = y - 10
 
 while y > 0
   print y

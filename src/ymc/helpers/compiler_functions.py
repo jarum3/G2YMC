@@ -146,12 +146,7 @@ def create_hlt(hlc_text:str, address: int, YMC_Str: str):
 
 def add_jumps(file_text: list[str], i: int, pline_list: list[PLine]) -> list[PLine]:
     pi: int = 0 # Used to save index of parent for the incoming if statement
-    pline: PLine = PLine("")
     lc_if = 0 # Save index of last child in if statement for when we add
-
-    for p in pline_list:
-        if file_text[i + 1] == p.text:
-            pline = p
 
     for p in pline_list: # For PLine in pline_list
         ci: int = 0     # store index of previous child (relevant to parent)

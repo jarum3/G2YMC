@@ -15,7 +15,6 @@ def main(file_path) -> list[PLine]:
     program_counter: int = 0
     pline_list: list[PLine] = []
     i: int = 0
-
     file_text: list[str] = []
 
     with open(file_path, 'r') as file:
@@ -44,9 +43,8 @@ def main(file_path) -> list[PLine]:
         # Setting the parent of the each line instance
         if pline_instance.text.startswith(' '):
             cf.set_parent(pline_instance, pline_list, i)
-            is_last_line = line_number == len(file_text) - 1
             next_line = file_text[line_number + 1]
-            if (len(next_line.strip()) == 0 or not next_line.startswith('   ')) and (not pline_instance.parent.text.startswith("else")): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
+            if (len(next_line.strip()) == 0 or not next_line.startswith(' ')) and (not pline_instance.parent.text.startswith("else")): # if next line is blank or not indented and it has a parent, then it is the last line in the code block
                     cf.set_last_child(pline_instance.parent, pline_instance)
                     program_counter += 3 # Always adds a jump of 3 bytes after the final child UNLESS it's at the end of an else statement
 
@@ -66,7 +64,7 @@ def main(file_path) -> list[PLine]:
         string = ""
         for pline in pline_list:
             if not pline.type == 1:     # don't include the signed/unsigned PLine types when writing YMC
-                string += str(pline.address) + "\t" # Added starting address of the YMC string groups inside the PLines
+                #string += str(pline.address) + "\t" # Added starting address of the YMC string groups inside the PLines
                 string += pline.YMC_string
         file.write(string)
     print("HLC has been translated to YMC and stored in '" + file_name + "'")
