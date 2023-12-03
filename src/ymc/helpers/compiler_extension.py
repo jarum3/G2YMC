@@ -36,17 +36,20 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
     line_text: str = pline_instance.text # grab text from line
     vars: list[str] = line_text.split()   # split variables in line into list.
     counter: int = 0
+    temp_ymc: str
+    isSigned: bool
     signed: list[str] = ["x", "y", "z"]
-
     assignment: str = vars[0] # get variable we are assigning a value to
     del vars[0]     # delete the variable being assiged cause its stored 
     del vars[0]     # delete the = sign
 
-    temp_ymc: str
+    if assignment in signed:
+        isSigned = True
+    else:
+        isSigned = False
 
     # Handle assignments here
     if len(vars) == 1: # this means that this is just an assingment operation with no arithmetic
-        
         if any(char.isdigit() for char in vars[0]): # literal
             temp_ymc = "movrl eax, " + vars[0] + "\n" 
             counter += 3 # movrl is 3 bytes, so we increment the program_counter by 3
@@ -64,14 +67,7 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
 
     # Handle 2-arg arithmetic
     elif len(vars) == 3: # this means it is a 2-arg operation, var[0] = arg1, var[1] = operator, var[2] = arg2
-        arguments: list[int] = cf.set2args(vars, variables)
         operator: str = vars[1]
-        isSigned: bool
-        if arguments[0] < 0 or arguments[1] < 0:
-                isSigned = True
-        else:
-            isSigned = False
-
         temp_counter: int
         # Process first 2 lines of ymc
         temp_ymc, temp_counter = cf.ymc_arithemtic_movs(vars, variables, False)
@@ -92,27 +88,13 @@ def arithmetic(pline_instance: PLine) -> int: # assignment portion of flowchart
 
     # Handle 3-arg arithmetic
     elif len(vars) == 5: # this means it is 3-arg operation
-        arguments: list[int] = cf.set3args(vars, variables)
         operators: list[str] = [vars[1], vars[3]]
-        first_op_isSigned: bool
-        second_op_isSigned: bool
-
-        if arguments[0] < 0 or arguments[1] < 0:
-            first_op_isSigned = True
-        else:
-            first_op_isSigned = False
-        if arguments[2] < 0:
-            second_op_isSigned = True
-        else:
-            second_op_isSigned = False
-
-        temp_counter: int = 0
         # Process first 3 lines of ymc
         temp_ymc, temp_counter = cf.ymc_arithemtic_movs(vars, variables, True)
         counter += temp_counter # Increment program counter by number of bytes calculated in ymc_arithemtic_movs function
 
         # Parse operators and process fourth line of ymc
-        temp_ymc += cf.ymc_operation_3args(operators, first_op_isSigned, second_op_isSigned)
+        temp_ymc += cf.ymc_operation_3args(operators, isSigned)
         counter += 3 # All 3 arg arithmetic operations are 3 bytes
 
         # Process fifth and final line of ymc
