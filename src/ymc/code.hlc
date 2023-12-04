@@ -1,10 +1,14 @@
-unsigned a
+signed x y
 
-a = 0
-print a
-a = a - 1
+x = -128
+print x
+x = x - 1
 print \n
-print a
-a = a + 1
+print x
+x = x + 1
 print \n
-print a
+print x
+x = 127
+x = x + 2
+print \n
+print x

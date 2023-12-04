@@ -5,9 +5,10 @@ print x
 x = x - 1
 print \n
 print x
-y = 127
+x = x + 1
 print \n
-print y
-y = y + 1
+print x
+x = 127
+x = x + 2
 print \n
-print y
+print x

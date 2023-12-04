@@ -1,19 +1,28 @@
-movrl eax, 0
+movrl eax, -128
 movmr 1023, eax
 movrm eax, 1023
-outu eax
+outs eax
 movrm eax, 1023
 movrl ebx, 1
 sub eax, ebx
 movmr 1023, eax
 outnl
 movrm eax, 1023
-outu eax
+outs eax
 movrm eax, 1023
 movrl ebx, 1
 add eax, ebx
 movmr 1023, eax
 outnl
 movrm eax, 1023
-outu eax
+outs eax
+movrl eax, 127
+movmr 1023, eax
+movrm eax, 1023
+movrl ebx, 2
+add eax, ebx
+movmr 1023, eax
+outnl
+movrm eax, 1023
+outs eax
 hlt
