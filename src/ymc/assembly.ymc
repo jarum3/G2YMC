@@ -1,33 +1,19 @@
-movrl eax, 10
+movrl eax, 0
 movmr 1023, eax
-movrl eax, 2
-movmr 1022, eax
-movrl eax, -10
-movmr 1021, eax
-movrl eax, 1
-movmr 1020, eax
-movrm eax, 1021
-movrl ecx, 0
-cmprr eax, ecx
-jge 64
-movrm eax, 1021
-outs eax
-outnl
-movrm eax, 1021
-movrm ebx, 1020
-add eax, ebx
-movmr 1021, eax
-jmp 28
-movrm eax, 1023
-movrl ecx, 0
-cmprr eax, ecx
-jle 100
 movrm eax, 1023
 outu eax
-outnl
 movrm eax, 1023
-movrm ebx, 1022
+movrl ebx, 1
 sub eax, ebx
 movmr 1023, eax
-jmp 64
+outnl
+movrm eax, 1023
+outu eax
+movrm eax, 1023
+movrl ebx, 1
+add eax, ebx
+movmr 1023, eax
+outnl
+movrm eax, 1023
+outu eax
 hlt
