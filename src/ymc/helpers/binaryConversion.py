@@ -34,12 +34,12 @@ def unsignedIntToBinary(num: int) -> str:
 # Return 8-bit binary string encoding an unsigned integer
 def signedIntToBinary(num: int) -> str:
     signBit = "0"
-    cycle = math.floor((num + 128) / 256) % 2 == 1
-    invert = {'0':'1', '1':'0'}
+    cycle = math.floor((num + 128) / 256) % 2 == 1 # Odd cycles of 256 will have inverse sign bits compared to their actual sign
+    invert = {'0':'1', '1':'0'} # Inversion of sign bit
     if num < 0: # If number is negative
         signBit = "1" # Sign bit should be 1
         num = num + 2**8 # And We should add 256 to our number
-    if cycle:
+    if cycle: # If we're on an odd cycle, invert the sign bit
         signBit = invert[signBit]
     # Sign bit + binary representation of
     shortReturnString: str = signBit + bin(num)[2:][-7:]    # Convert to binary, trim 0b from string,
