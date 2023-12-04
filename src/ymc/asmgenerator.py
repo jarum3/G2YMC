@@ -24,7 +24,7 @@ def main():
     # Instruction name, hex code, total width, argument types, function, and optional general flags and carry flags
     # All can be found in encoding document, just written down in code
     # Halt, uses built-in exit
-    addDict(Instruction("hlt", "A0", 1, None, exit))
+    addDict(Instruction("hlt", "A0", 1, None, halt))
     # Output instructions
     addDict(Instruction("outs", "A1", 2, ["register"], outputSigned))
     addDict(Instruction("outu", "A2", 2, ["register"], outputUnsigned))
@@ -83,12 +83,12 @@ def main():
     )
     # Jumps
     addDict(Instruction("jmp", "60", 3, ["memory"], unconditionalJump))
-    addDict(Instruction("jg", "60", 3, ["memory"], jumpGreater))
-    addDict(Instruction("jge", "61", 3, ["memory"], jumpGreaterEqual))
-    addDict(Instruction("jl", "62", 3, ["memory"], jumpLess))
-    addDict(Instruction("jle", "63", 3, ["memory"], JumpLessEqual))
-    addDict(Instruction("jne", "64", 3, ["memory"], jumpNotEqual))
-    addDict(Instruction("je", "65", 3, ["memory"], jumpEqual))
+    addDict(Instruction("jg", "61", 3, ["memory"], jumpGreater))
+    addDict(Instruction("jge", "62", 3, ["memory"], jumpGreaterEqual))
+    addDict(Instruction("jl", "63", 3, ["memory"], jumpLess))
+    addDict(Instruction("jle", "64", 3, ["memory"], JumpLessEqual))
+    addDict(Instruction("jne", "65", 3, ["memory"], jumpNotEqual))
+    addDict(Instruction("je", "66", 3, ["memory"], jumpEqual))
     ## Three-arg arithmetic, split to stay under 90 columns
     addDict(
         Instruction(

@@ -48,7 +48,7 @@ def main():
             "Modified Flags",
         ]
         writer.writerow(fields) # Writing headers
-        while True: # Keep going until a halt is found
+        while not sm.cpu.stopping: # Keep going until a halt is found
             address: int = sm.cpu.instructionPointer # Current address for instruction to read
             line = PLine("")
             lineText: str = ""

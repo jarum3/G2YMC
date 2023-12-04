@@ -13,6 +13,8 @@ import math  # For rounding from division
 
 ## Special instructions
 
+def halt() -> None:
+    cpu.stopping = True
 
 # print the signed representation of the CPU register pointed to by the register byte
 def outputSigned(register: str) -> None:
