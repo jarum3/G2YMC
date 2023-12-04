@@ -2,9 +2,12 @@ signed x y
 
 x = -128
 print x
-x = a - 1
+x = x - 1
 print \n
+print x
 y = 127
+print \n
 print y
 y = y + 1
+print \n
 print y
