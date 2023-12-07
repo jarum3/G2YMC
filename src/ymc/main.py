@@ -70,7 +70,7 @@ def main():
             # Generate binary for current chunk of code
             instrBinary: str = bc.hexToBinary(instruction.hexCode)
             ymcBinary: str = instrBinary + "".join(args)
-            ymcHex: str = instruction.hexCode
+            ymcHex: str = ""
             ymc: str = ""
             # Match current chunk of code to YMC lines (Preserves negatives, etc)
             
@@ -103,13 +103,13 @@ def main():
                                 ymc += "ERROR"
                         if len(args) > i - 1:
                             ymc += ","
-            if args:
-                # Convert binary to hex, fill it to multiple of 2, and make it uppercase
-                ymcHex += (
-                    hex(int(ymcBinary, 2))
-                    .zfill(math.floor(len(ymcBinary) / 4))[2:]
-                    .upper()
-                )
+            # Convert binary to hex, fill it to multiple of 2, and make it uppercase
+            ymcHex += (
+                hex(int(ymcBinary, 2))[2:]
+                .zfill(math.floor(len(ymcBinary) / 4))
+                .upper()
+            )
+            ymcHex = " ".join([ymcHex[i:i+2] for i in range(0, len(ymcHex), 2)])
             # Grab output, execute instruction
             output: str = sm.execute(instruction, args)  # Execute instruction
             output = output.replace("\n", "\\n") # Format output
