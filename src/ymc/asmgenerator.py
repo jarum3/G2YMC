@@ -4,6 +4,7 @@
 # to two pickle files to be used later
 ########################
 from __future__ import annotations
+from pathlib import Path
 from instructions.Instruction import Instruction
 from instructions.asmFunctions import *
 import pickle
@@ -344,10 +345,11 @@ def main():
     )
 
     # Write both dictionaries to pickle files
-    #! Python processes filenames in relation to current working directory, make sure that it is set to G2YMC/src/ymc for this to work
-    with open("instructions/instructionsByHex.pkl", "wb") as file:
+    hexFile = str(Path(__file__).parent) + "/instructions/instructionsByHex.pkl"
+    nameFile = str(Path(__file__).parent) + "/instructions/instructionsByName.pkl"
+    with open(hexFile, "wb") as file:
         pickle.dump(instructionsByHex, file)
-    with open("instructions/instructionsByName.pkl", "wb") as file:
+    with open(nameFile, "wb") as file:
         pickle.dump(instructionsByName, file)
 
 

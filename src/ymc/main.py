@@ -16,14 +16,18 @@ import encoder as en
 import csv
 import pickle
 import math
+from pathlib import Path
 
 def main():
     # Compile file.hlc, and save its list to a variable
-    pline_list: list[PLine] = cm.main("code.hlc")
+    input_file = Path(__file__).with_name("code.hlc")
+    pline_list: list[PLine] = cm.main(input_file)
     # Save both instruction dictionaries, one for the simulation, and one for encoding
-    with open("instructions/instructionsByHex.pkl", "rb") as file:
+    hexFile = str(Path(__file__).parent) + "/instructions/instructionsByHex.pkl"
+    nameFile = str(Path(__file__).parent) + "/instructions/instructionsByName.pkl"
+    with open(hexFile, "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
-    with open("instructions/instructionsByName.pkl", "rb") as file:
+    with open(nameFile, "rb") as file:
         instructionsByName: dict[str, Instruction] = pickle.load(file)
     # Get range of addresses for each HLC line, to assign HLC lines to YMC lines
     ranges: list[tuple[int, int]] = []
@@ -34,8 +38,10 @@ def main():
             maximum = pline_list[i + 1].address - 1
         ranges.append((minimum, maximum))
     en.main()  # Encode file.ymc to file.bin
-    sm.loadFile("binary.bin")  # Load in the binary file
-    with open("output.csv", "w", newline="") as file:  # Open CSV to write to
+    binaryFile = str(Path(__file__).with_name("binary.bin"))
+    sm.loadFile(binaryFile)  # Load in the binary file
+    outputFile = Path(__file__).with_name("output.csv")
+    with open(outputFile, "w", newline="") as file:  # Open CSV to write to
         writer = csv.writer(file)  # Create CSV writer object
         # Headers for CSV
         fields: list[str] = [

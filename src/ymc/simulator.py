@@ -1,6 +1,7 @@
 from __future__ import annotations
 from contextlib import redirect_stdout
 import io
+from pathlib import Path
 import pickle
 from instructions.Instruction import Instruction
 import instructions.YMCCPU as cpu
@@ -50,9 +51,11 @@ def execute(instruction: Instruction, args: list[str]) -> str:
 def main():
     # Should use files asm.pkl to convert from assembly code to binary
     # asm.pkl should contain object files for all instructions, with their assigned hex code and length being used to create binary data
-    with open("instructions/instructionsByHex.pkl", "rb") as file:
+    hexFile = str(Path(__file__).parent) + "/instructions/instructionsByHex.pkl"
+    binaryFile = Path(__file__).with_name("binary.bin")
+    with open(hexFile, "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
-    loadFile("binary.bin") # Load in the binary file
+    loadFile(str(binaryFile)) # Load in the binary file
     while (not cpu.stopping): # Loop until we find a halt
       (instruction, args) = decode(instructions, cpu.instructionPointer) # Decode instruction
       output = execute(instruction, args) # Execute instruction

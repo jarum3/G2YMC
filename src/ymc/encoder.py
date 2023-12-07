@@ -4,6 +4,7 @@
 # and writes that string to file.bin 
 ##########################################
 from __future__ import annotations
+from pathlib import Path
 import pickle
 from instructions.Instruction import Instruction
 import helpers.binaryConversion as bc
@@ -58,18 +59,21 @@ def getBinaryFromLine(line: str, instructions: dict[str, Instruction]) -> str:
 def main():
     # Should use files asm.pkl to convert from assembly code to binary
     # asm.pkl should contain object files for all instructions, with their assigned hex code and length being used to create binary data
+    nameFile = str(Path(__file__).parent) + "/instructions/instructionsByName.pkl"
     binaryString: str = ""
-    with open("instructions/instructionsByName.pkl", "rb") as file:
+    with open(nameFile, "rb") as file:
         instructions: dict[str, Instruction] = pickle.load(file)
     # Open input file
-    with open("assembly.ymc", "r") as file:
+    ymcFile = str(Path(__file__).with_name("assembly.ymc"))
+    with open(ymcFile, "r") as file:
         for line in file:
             # Loop through lines of input files
             binary = getBinaryFromLine(line, instructions)
             if binary:
                 binaryString += binary
     # Write binary string
-    with open("binary.bin", "w") as file:
+    binaryFile = str(Path(__file__).with_name("binary.bin"))
+    with open(binaryFile, "w") as file:
         file.write(binaryString)
 
 
